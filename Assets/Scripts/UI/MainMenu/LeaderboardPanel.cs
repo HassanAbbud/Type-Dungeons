@@ -13,7 +13,8 @@ public class LeaderboardPanel : BasePanel<LeaderboardPanel>
 
     private void Start()
     {
-        btnBack.onClick.AddListener(() => { 
+        btnBack.onClick.AddListener(() => {
+            SoundManager.PlaySound(SoundType.BTN_CLICK);
             this.HideMe();
             MainPanel.Instance.ShowMe();
         });

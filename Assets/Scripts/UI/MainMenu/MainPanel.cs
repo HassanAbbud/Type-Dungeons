@@ -10,17 +10,24 @@ public class MainPanel : BasePanel<MainPanel>
 
     private void Start()
     {
+        SoundManager.PlaySound(SoundType.BGM1);
+
         //TO DO: go to gameScene
-        btnStart.onClick.AddListener(() => { });
+        btnStart.onClick.AddListener(() => {
+            SoundManager.PlaySound(SoundType.BTN_CLICK);
+            SoundManager.PlaySound(SoundType.ANNOUNCER);
+        });
 
         //TO DO: go to leaderboard
         btnLeaderboard.onClick.AddListener(() => {
+            SoundManager.PlaySound(SoundType.BTN_CLICK);
             this.HideMe();
             LeaderboardPanel.Instance.ShowMe();
         });
 
         //go to settings
-        btnSettings.onClick.AddListener(() => { 
+        btnSettings.onClick.AddListener(() => {
+            SoundManager.PlaySound(SoundType.BTN_CLICK);
             this.HideMe();
             SettingsPanel.Instance.ShowMe();
         });

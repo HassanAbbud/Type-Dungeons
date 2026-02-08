@@ -20,11 +20,16 @@ public class SoundManager : MonoBehaviour
     private static SoundManager instance;
 
     private AudioSource bgmSource;
+    private static float bgmVolume = 0.5f;
     private AudioSource sfxSource;
+    private static float sfxVolume = 1.0f;
     private AudioSource announcerSource;
+    private static float announcerVolume = 0.7f;
 
     private readonly Queue<AudioClip> announcementQueue = new();
     private bool isAnnouncing = false;
+
+    public static float Scale { get; set; } = 0.5f;
 
     private void Awake()
     {
@@ -44,27 +49,28 @@ public class SoundManager : MonoBehaviour
         announcerSource = gameObject.AddComponent<AudioSource>();
     }
 
-    public static void PlaySound(SoundType type, float volume = 1.0f, int announcerClipIdx = 0)
+    public static void PlaySound(SoundType type, int announcerClipIdx = 0)
     {
         if (instance == null) return;
+
 
         switch (type)
         {
             case SoundType.BGM1 or SoundType.BGM2:
                 instance.bgmSource.clip = instance.audioClips[(int)type];
                 instance.bgmSource.loop = true;
-                instance.bgmSource.volume = volume;
+                instance.bgmSource.volume = bgmVolume * Scale;
                 instance.bgmSource.Play();
                 break;
 
             case SoundType.BTN_CLICK:
                 AudioClip clickClip = instance.audioClips[(int)type];
-                instance.sfxSource.PlayOneShot(clickClip, volume);
+                instance.sfxSource.PlayOneShot(clickClip, sfxVolume * Scale);
                 break;
 
             case SoundType.ANNOUNCER:
                 AudioClip announcerClip = instance.announcerClips[announcerClipIdx];
-                EnqueueAnnouncement(announcerClip, volume);
+                EnqueueAnnouncement(announcerClip, announcerVolume * Scale);
                 break;
             default:
                 break;
@@ -97,7 +103,17 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    private static void EnqueueAnnouncement(AudioClip clip, float volume = 1.0f)
+    public static void UpdateBGMVolume(float value)
+    {
+        if (instance == null) return;
+
+        if (instance.bgmSource != null && instance.bgmSource.isPlaying)
+        {
+            instance.bgmSource.volume = bgmVolume * value;
+        }
+    }
+
+    private static void EnqueueAnnouncement(AudioClip clip, float volume)
     {
         instance.announcementQueue.Enqueue(clip);
 
@@ -107,7 +123,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    private static IEnumerator ProcessAnnouncementQueue(float volume = 1.0f)
+    private static IEnumerator ProcessAnnouncementQueue(float volume)
     {
         instance.isAnnouncing = true;
 
@@ -121,4 +137,5 @@ public class SoundManager : MonoBehaviour
 
         instance.isAnnouncing = false;
     }
+
 }
