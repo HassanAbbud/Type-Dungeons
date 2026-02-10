@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -40,19 +40,13 @@ public class SoundManager : MonoBehaviour
         }
         instance = this;
         DontDestroyOnLoad(gameObject);
-    }
 
-    private void Start()
-    {
-        bgmSource = GetComponent<AudioSource>();
-        sfxSource = gameObject.AddComponent<AudioSource>();
-        announcerSource = gameObject.AddComponent<AudioSource>();
+        InitAudioSource();
     }
 
     public static void PlaySound(SoundType type, int announcerClipIdx = 0)
     {
         if (instance == null) return;
-
 
         switch (type)
         {
@@ -138,4 +132,11 @@ public class SoundManager : MonoBehaviour
         instance.isAnnouncing = false;
     }
 
+
+    private void InitAudioSource()
+    {
+        bgmSource = GetComponent<AudioSource>();
+        sfxSource = gameObject.AddComponent<AudioSource>();
+        announcerSource = gameObject.AddComponent<AudioSource>();
+    }
 }
