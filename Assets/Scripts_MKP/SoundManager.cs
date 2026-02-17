@@ -40,13 +40,15 @@ public class SoundManager : MonoBehaviour
         }
         instance = this;
         DontDestroyOnLoad(gameObject);
+
+        bgmSource = GetComponent<AudioSource>();
+        sfxSource = gameObject.AddComponent<AudioSource>();
+        announcerSource = gameObject.AddComponent<AudioSource>();
     }
 
     private void Start()
     {
-        bgmSource = GetComponent<AudioSource>();
-        sfxSource = gameObject.AddComponent<AudioSource>();
-        announcerSource = gameObject.AddComponent<AudioSource>();
+        //
     }
 
     public static void PlaySound(SoundType type, int announcerClipIdx = 0)
