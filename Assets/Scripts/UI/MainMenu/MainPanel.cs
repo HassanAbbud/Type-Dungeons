@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 
 public class MainPanel : BasePanel<MainPanel>
 {
@@ -12,10 +14,12 @@ public class MainPanel : BasePanel<MainPanel>
     {
         SoundManager.PlaySound(SoundType.BGM1);
 
-        //TO DO: go to gameScene
-        btnStart.onClick.AddListener(() => {
+        //go to gameScene
+        btnStart.onClick.AddListener(() =>
+        {
             SoundManager.PlaySound(SoundType.BTN_CLICK);
             SoundManager.PlaySound(SoundType.ANNOUNCER);
+            SceneManager.LoadScene("GameplayScene");
         });
 
         //TO DO: go to leaderboard
