@@ -5,7 +5,8 @@ using UnityEngine;
 /// <summary>
 /// Central game state manager for Type Dungeons.
 /// Singleton — all other scripts communicate through events.
-/// Owns: health, level, time, score. Delegates words to Hassan's WordGenerator.
+/// Owns: health, level, time, score.
+/// Words route through WordDifficultyScaler → WordGenerator.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
@@ -31,6 +32,8 @@ public class GameManager : MonoBehaviour
     public event Action<float> OnTimerTick;               // remainingTime
     public event Action OnTimerExpired;
     public event Action<GameState> OnGameStateChanged;
+    public event Action<int> OnCoinsChanged;              // newCoinTotal
+    public event Action<int, int> OnWordProgressChanged;  // (wordsThisLevel, wordsNeeded)
     #endregion
 
     public enum GameState { MainMenu, Playing, Paused, GameOver }
@@ -53,9 +56,6 @@ public class GameManager : MonoBehaviour
     [Header("Scoring")]
     [SerializeField] private int baseScorePerWord = 100;
     [SerializeField] private float accuracyBonusMultiplier = 1.5f;
-
-    [Header("References — drag in Inspector")]
-    [SerializeField] private WordGenerator wordGenerator;
     #endregion
 
     #region Runtime State (read-only for other scripts)
@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour
     public int WordsNeededThisLevel => wordsPerLevel + (CurrentLevel - 1) * wordsPerLevelIncrease;
     public int TotalWordsCompleted { get; private set; }
 
-    // Accuracy — fed by whoever handles the typing input
+    // Accuracy — fed by the typing input script
     public int TotalKeysPressed { get; private set; }
     public int CorrectKeysPressed { get; private set; }
     public float Accuracy => TotalKeysPressed == 0 ? 1f : (float)CorrectKeysPressed / TotalKeysPressed;
@@ -77,6 +77,8 @@ public class GameManager : MonoBehaviour
     // Coins for store power-ups (Release 2.0 ready)
     public int Coins { get; private set; }
     #endregion
+
+    private Coroutine timerCoroutine;
 
     #region Public API
 
@@ -96,11 +98,17 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         SetState(GameState.Playing);
 
+        // Fire initial state so UI can update immediately
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
         OnLevelChanged?.Invoke(CurrentLevel);
         OnScoreChanged?.Invoke(Score);
+        OnCoinsChanged?.Invoke(Coins);
+        OnWordProgressChanged?.Invoke(0, WordsNeededThisLevel);
 
-        StartCoroutine(LevelTimerCoroutine());
+        // Stop any leftover timer from a previous run, then start fresh
+        if (timerCoroutine != null)
+            StopCoroutine(timerCoroutine);
+        timerCoroutine = StartCoroutine(LevelTimerCoroutine());
     }
 
     public void PauseGame()
@@ -142,7 +150,9 @@ public class GameManager : MonoBehaviour
     /// Called when the player successfully types a complete word.
     /// Handles scoring, coin drops, and level advancement.
     /// </summary>
-    public void OnWordCompleted(float wordAccuracy, int wordLength)
+    /// <param name="wordAccuracy">0.0–1.0 ratio of correct keystrokes for this word</param>
+    /// <param name="wordLength">Number of characters in the completed word</param>
+    public void CompleteWord(float wordAccuracy, int wordLength)
     {
         if (CurrentState != GameState.Playing) return;
 
@@ -150,18 +160,20 @@ public class GameManager : MonoBehaviour
         int wordScore = Mathf.RoundToInt(baseScorePerWord * wordLength * 0.5f);
         if (wordAccuracy >= 0.95f)
             wordScore = Mathf.RoundToInt(wordScore * accuracyBonusMultiplier);
-        // Level multiplier — harder levels reward more
         wordScore = Mathf.RoundToInt(wordScore * (1f + (CurrentLevel - 1) * 0.15f));
 
         Score += wordScore;
         OnScoreChanged?.Invoke(Score);
 
         // --- Coins for store (Release 2.0) ---
-        Coins += Mathf.Max(1, wordLength / 2);
+        int coinsEarned = Mathf.Max(1, wordLength / 2);
+        Coins += coinsEarned;
+        OnCoinsChanged?.Invoke(Coins);
 
         // --- Level progression ---
         WordsCompletedThisLevel++;
         TotalWordsCompleted++;
+        OnWordProgressChanged?.Invoke(WordsCompletedThisLevel, WordsNeededThisLevel);
 
         if (WordsCompletedThisLevel >= WordsNeededThisLevel)
             AdvanceLevel();
@@ -175,28 +187,33 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Get the next word via Hassan's WordGenerator.
-    /// Other scripts call this instead of WordGenerator directly
-    /// so the level is always in sync.
+    /// THE single entry point for getting words.
+    /// Routes through WordDifficultyScaler for blended difficulty.
+    /// Other scripts call THIS, not WordGenerator directly.
     /// </summary>
     public string RequestNextWord()
     {
-        if (wordGenerator == null)
-        {
-            Debug.LogError("[GameManager] WordGenerator reference not assigned in Inspector!");
-            return "error";
-        }
-        return wordGenerator.GetRandomWord(CurrentLevel);
+        if (WordDifficultyScaler.Instance != null)
+            return WordDifficultyScaler.Instance.GetWord();
+
+        Debug.LogWarning("[GameManager] WordDifficultyScaler not found! Check scene setup.");
+        return "error";
     }
 
     // --- Power-up / Store helpers (Release 2.0 ready) ---
     public void AddTime(float seconds) => RemainingTime += seconds;
-    public void AddCoins(int amount) => Coins += amount;
+
+    public void AddCoins(int amount)
+    {
+        Coins += amount;
+        OnCoinsChanged?.Invoke(Coins);
+    }
 
     public bool SpendCoins(int amount)
     {
         if (Coins < amount) return false;
         Coins -= amount;
+        OnCoinsChanged?.Invoke(Coins);
         return true;
     }
 
@@ -217,6 +234,7 @@ public class GameManager : MonoBehaviour
         WordsCompletedThisLevel = 0;
         RemainingTime = GetLevelTime();
         OnLevelChanged?.Invoke(CurrentLevel);
+        OnWordProgressChanged?.Invoke(0, WordsNeededThisLevel);
     }
 
     private float GetLevelTime()
@@ -234,13 +252,17 @@ public class GameManager : MonoBehaviour
         if (newState == GameState.GameOver)
         {
             Time.timeScale = 0f;
-            StopAllCoroutines();
+            if (timerCoroutine != null)
+            {
+                StopCoroutine(timerCoroutine);
+                timerCoroutine = null;
+            }
         }
     }
 
     private IEnumerator LevelTimerCoroutine()
     {
-        while (CurrentState == GameState.Playing || CurrentState == GameState.Paused)
+        while (true)
         {
             if (CurrentState == GameState.Playing)
             {
@@ -252,7 +274,9 @@ public class GameManager : MonoBehaviour
                     RemainingTime = 0f;
                     OnTimerExpired?.Invoke();
                     TakeDamage(1);
-                    RemainingTime = GetLevelTime();
+
+                    if (CurrentState == GameState.Playing)
+                        RemainingTime = GetLevelTime();
                 }
             }
             yield return null;
