@@ -1,5 +1,8 @@
+using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public enum GameMode
 {
@@ -14,6 +17,12 @@ public class AssetManager : MonoBehaviour
 
     [Header("UI References")]
     public TMP_Dropdown settingsDropdown;
+
+    private Image backgroundImg;
+
+    public Sprite[] backgrounds;
+
+    public static event Action OnModeChanged;
 
     private void Awake()
     {
@@ -37,7 +46,7 @@ public class AssetManager : MonoBehaviour
         
     }
 
-    public GameMode GetGameMode()
+    public static GameMode GetGameMode()
     {
         //Debug.Log((GameMode)settingsDropdown.value);
         return gameMode;
@@ -48,5 +57,35 @@ public class AssetManager : MonoBehaviour
         //Debug.Log("Dropdown reference is: " + settingsDropdown);
         gameMode = (GameMode)value;
         //Debug.Log("Game mode changed to: " + gameMode);
+        OnModeChanged?.Invoke();
+    }
+
+    public static void BindImage(Image image)
+    {
+        instance.backgroundImg = image;
+        instance.SetBackground();
+    }
+
+    /* React to Game Event */
+    //private void OnEnable()
+    //{
+    //    SceneManager.sceneLoaded += LoadNewScene;
+    //}
+
+    //private void OnDisable()
+    //{
+    //    SceneManager.sceneLoaded -= LoadNewScene;
+    //}
+
+    //private void LoadNewScene(Scene scene, LoadSceneMode mode)
+    //{
+    //    if (backgroundImg == null) return;
+    //    SetBackground();
+    //}
+    private void SetBackground()
+    {
+        if (backgroundImg == null) return;
+
+        backgroundImg.sprite = backgrounds[(int)gameMode];
     }
 }

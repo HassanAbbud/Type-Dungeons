@@ -4313,6 +4313,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AssetManager
   settingsDropdown: {fileID: 1677730726}
+  backgrounds:
+  - {fileID: 6258200454185170781, guid: 96a6965c377d72047ab8ba0f6e5d1a32, type: 3}
+  - {fileID: 6911171773632316957, guid: 5abf3ba4940d9704199a2ceaccc582c6, type: 3}
+  - {fileID: 6306369824148652953, guid: 3ffa703995b054f42bef2cabc2d5123c, type: 3}
 --- !u!4 &1394994614
 Transform:
   m_ObjectHideFlags: 0
@@ -4855,6 +4859,10 @@ MonoBehaviour:
   audioClips:
   - {fileID: 8300000, guid: 4f343d136a026954ab6b8bd0aba71594, type: 3}
   - {fileID: 8300000, guid: 2a1365284e031aa40b703cb709a784c3, type: 3}
+  - {fileID: 8300000, guid: 42955c9ce73b3eb45a932a62488a5451, type: 3}
+  - {fileID: 8300000, guid: 6f71d3dd2f98fa843adc296ff10a3c8c, type: 3}
+  - {fileID: 8300000, guid: 6cc97c5b6a21a264f976cd8a6ac41133, type: 3}
+  - {fileID: 8300000, guid: 656810da01adb5b4d9048a646f59c457, type: 3}
   - {fileID: 8300000, guid: eb55345aafd8d9c45a5637e644e461b7, type: 3}
   announcerClips:
   - {fileID: 8300000, guid: fffe53eefc089e1489bca160f87c535d, type: 3}
@@ -5262,8 +5270,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1394994613}
         m_TargetAssemblyTypeName: AssetManager, Assembly-CSharp
-        m_MethodName: OnGameModeChanged
-        m_Mode: 3
+        m_MethodName: SetGameMode
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
