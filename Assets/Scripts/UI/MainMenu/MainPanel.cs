@@ -20,6 +20,8 @@ public class MainPanel : BasePanel<MainPanel>
             SoundManager.PlaySound(SoundType.BTN_CLICK);
             SoundManager.PlaySound(SoundType.ANNOUNCER);
             SceneManager.LoadScene("GameplayScene");
+            SoundManager.StopSound(SoundType.BGM1);
+            SoundManager.PlaySound(SoundType.BGM2);
         });
 
         //TO DO: go to leaderboard
