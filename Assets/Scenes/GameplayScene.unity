@@ -4571,6 +4571,7 @@ GameObject:
   - component: {fileID: 2048097263}
   - component: {fileID: 2048097262}
   - component: {fileID: 2048097261}
+  - component: {fileID: 2048097264}
   m_Layer: 0
   m_Name: _WordSystem
   m_TagString: Untagged
@@ -4674,6 +4675,95 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2048097264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2048097260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8de1b272c3654f4984c408d2a881e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WordBankFilter
+  currentMode: 0
+  minWordLength: 2
+  maxWordLengthTeen: 20
+  maxWordLengthChildren: 8
+  globalBlockedWords:
+  - fuck
+  - shit
+  - damn
+  - hell
+  - ass
+  - bitch
+  - crap
+  - dick
+  - piss
+  - slut
+  - whore
+  - bastard
+  - cunt
+  - nigger
+  - faggot
+  - retard
+  - spic
+  - kike
+  - kill
+  - murder
+  - rape
+  - suicide
+  - torture
+  - cocaine
+  - heroin
+  - meth
+  - weed
+  - drug
+  - sex
+  - porn
+  - nude
+  - boob
+  - penis
+  - vagina
+  childrenExtraBlocked:
+  - death
+  - dead
+  - die
+  - blood
+  - evil
+  - demon
+  - zombie
+  - skull
+  - grave
+  - corpse
+  - ghost
+  - poison
+  - dagger
+  - slay
+  - destroy
+  - doom
+  - curse
+  - venom
+  - wrath
+  - fear
+  - horror
+  - witch
+  - devil
+  - beast
+  - plague
+  - tomb
+  blockedSubstrings:
+  - fuck
+  - shit
+  - ass
+  - dick
+  - cock
+  - cunt
+  - nigg
+  - fag
+  - slut
+  - whore
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

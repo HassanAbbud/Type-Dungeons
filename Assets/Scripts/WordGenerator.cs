@@ -104,6 +104,10 @@ public class WordGenerator : MonoBehaviour
     /// <param name="bankFileName">JSON filename without extension, e.g. "children_mode"</param>
     public void SwitchWordBank(string bankFileName)
     {
+        // Sync filter mode with word bank
+        if (WordBankFilter.Instance != null)
+            WordBankFilter.Instance.SetMode(bankFileName);
+
         StartCoroutine(LoadWordBank(bankFileName));
     }
 
@@ -222,15 +226,18 @@ public class WordGenerator : MonoBehaviour
                 continue;
             }
 
-            // Filter: lowercase, trim, remove blocked, remove empty
-            var filtered = tier.words
+            // Basic cleanup
+            var cleaned = tier.words
                 .Select(w => w.ToLower().Trim())
                 .Where(w => !string.IsNullOrEmpty(w))
                 .Where(w => !blockedWords.Contains(w))
-                .Distinct()
                 .ToList();
 
-            targetList.AddRange(filtered);
+            // Run through content filter if available
+            if (WordBankFilter.Instance != null)
+                cleaned = WordBankFilter.Instance.FilterWords(cleaned);
+
+            targetList.AddRange(cleaned);
         }
 
         // Validate we actually have words
