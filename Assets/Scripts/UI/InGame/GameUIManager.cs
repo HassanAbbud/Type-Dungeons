@@ -1,7 +1,8 @@
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 using System.Collections;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UI;
 
 /// <summary>
 /// UI Manager for Type Dungeons — HUD focused.
@@ -76,6 +77,8 @@ public class GameUIManager : MonoBehaviour
 
     private float maxLevelTime;
 
+    private string currentWord;
+
     #region Lifecycle
 
     private void Start()
@@ -112,6 +115,10 @@ public class GameUIManager : MonoBehaviour
 
     private void Update()
     {
+
+        if (!string.IsNullOrEmpty(currentWord))
+            Debug.Log($"[GameUIManager] currentWord: {currentWord}");
+
         // Pause toggle
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -166,6 +173,11 @@ public class GameUIManager : MonoBehaviour
                 break;
             case GameManager.GameState.Paused:
                 if (pausePanel != null) pausePanel.SetActive(true);
+                break;
+            case GameManager.GameState.GameOver:
+                if (hudPanel != null) hudPanel.SetActive(false);
+                if (pausePanel != null) pausePanel.SetActive(false);
+                if (gameOverPanel != null) gameOverPanel.SetActive(true);
                 break;
         }
     }
@@ -294,6 +306,7 @@ public class GameUIManager : MonoBehaviour
     /// <summary>Display the target word above the input field.</summary>
     public void DisplayWord(string word)
     {
+        currentWord = word;
         if (targetWordText != null)
             targetWordText.text = word;
     }
