@@ -12,7 +12,6 @@ public class MainPanel : BasePanel<MainPanel>
 
     private void Start()
     {
-        SoundManager.PlaySound(SoundType.BGM1);
 
         //go to gameScene
         btnStart.onClick.AddListener(() =>
