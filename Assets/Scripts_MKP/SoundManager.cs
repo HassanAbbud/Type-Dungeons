@@ -1,11 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum SoundType
 {
-    BGM1,
-    BGM2,
+    BGM_Adult1,
+    BGM_Adult2,
+    BGM_Teen1,
+    BGM_Teen2,
+    BGM_Kid1,
+    BGM_Kid2,
     BTN_CLICK,
     ANNOUNCER
 }
@@ -50,6 +55,15 @@ public class SoundManager : MonoBehaviour
     {
         //
     }
+    private static void StopBGM()
+    {
+        if (instance.bgmSource.isPlaying && instance.bgmSource.loop)
+        {
+            instance.bgmSource.Stop();
+            instance.bgmSource.loop = false;
+            instance.bgmSource.clip = null;
+        }
+    }
 
     public static void PlaySound(SoundType type, int announcerClipIdx = 0)
     {
@@ -58,7 +72,7 @@ public class SoundManager : MonoBehaviour
 
         switch (type)
         {
-            case SoundType.BGM1 or SoundType.BGM2:
+            case SoundType.BGM_Adult1 or SoundType.BGM_Adult2 or SoundType.BGM_Teen1 or SoundType.BGM_Teen2 or SoundType.BGM_Kid1 or SoundType.BGM_Kid2:
                 instance.bgmSource.clip = instance.audioClips[(int)type];
                 instance.bgmSource.loop = true;
                 instance.bgmSource.volume = bgmVolume * Scale;
@@ -85,13 +99,8 @@ public class SoundManager : MonoBehaviour
 
         switch (type)
         {
-            case SoundType.BGM1 or SoundType.BGM2:
-                if (instance.bgmSource.isPlaying && instance.bgmSource.loop)
-                {
-                    instance.bgmSource.Stop();
-                    instance.bgmSource.loop = false;
-                    instance.bgmSource.clip = null;
-                }
+            case SoundType.BGM_Adult1 or SoundType.BGM_Adult2 or SoundType.BGM_Teen1 or SoundType.BGM_Teen2 or SoundType.BGM_Kid1 or SoundType.BGM_Kid2:
+                StopBGM();
                 break;
 
             case SoundType.ANNOUNCER:
@@ -140,4 +149,63 @@ public class SoundManager : MonoBehaviour
         instance.isAnnouncing = false;
     }
 
+    /* React to Game Event */
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += LoadNewScene;
+        AssetManager.OnModeChanged += PlayBGM;
+    }
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= LoadNewScene;
+        AssetManager.OnModeChanged -= PlayBGM;
+    }
+
+    private void LoadNewScene(Scene scene, LoadSceneMode mode)
+    {
+        PlayBGM();
+    }
+
+    private void PlayBGM()
+    {
+        StopBGM();
+        string sceneName = SceneManager.GetActiveScene().name;
+        GameMode currentMode = AssetManager.GetGameMode();
+        if (sceneName == "MenuScene")
+        {
+            switch (currentMode)
+            {
+                case GameMode.Adult:
+                    PlaySound(SoundType.BGM_Adult1);
+                    break;
+                case GameMode.Teenager:
+                    PlaySound(SoundType.BGM_Teen1);
+                    break;
+                case GameMode.Kid:
+                    PlaySound(SoundType.BGM_Kid1);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        else
+        {
+            switch (currentMode)
+            {
+                case GameMode.Adult:
+                    PlaySound(SoundType.BGM_Adult2);
+                    break;
+                case GameMode.Teenager:
+                    PlaySound(SoundType.BGM_Teen2);
+                    break;
+                case GameMode.Kid:
+                    PlaySound(SoundType.BGM_Kid2);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    }
 }
