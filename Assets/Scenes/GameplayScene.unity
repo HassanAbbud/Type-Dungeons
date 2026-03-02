@@ -7423,7 +7423,7 @@ MonoBehaviour:
   startingLevel: 1
   levelTimeSeconds: 2
   timePerLevelReduction: 5
-  minimumLevelTime: 2
+  minimumLevelTime: 10
   wordsPerLevel: 10
   wordsPerLevelIncrease: 2
   baseScorePerWord: 100
