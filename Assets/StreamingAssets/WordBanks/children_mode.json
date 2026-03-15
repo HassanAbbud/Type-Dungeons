@@ -1,0 +1,63 @@
+{
+  "bankName": "Children Mode",
+  "version": "1.0",
+  "description": "Word bank for younger players (ages 6-11). Short, common words only.",
+  "tiers": [
+    {
+      "tierName": "Easy",
+      "difficulty": 1,
+      "words": [
+        "at", "am", "an", "as", "be", "by", "do", "go", "he",
+        "if", "in", "is", "it", "me", "my", "no", "of", "on",
+        "or", "so", "to", "up", "us", "we", "ox", "hi",
+        "cat", "dog", "sun", "run", "fun", "hat", "bat", "rat",
+        "map", "cap", "cup", "red", "bed", "big", "pig", "dig",
+        "hop", "top", "pop", "hot", "pot", "got", "let", "pet",
+        "net", "wet", "set", "sit", "hit", "fit", "bit", "kit",
+        "bus", "bug", "hug", "rug", "tug", "jug", "mug", "dug",
+        "hen", "ten", "pen", "den", "men", "fan", "pan", "van",
+        "fin", "pin", "win", "bin", "tin", "bun", "pun", "nun"
+      ]
+    },
+    {
+      "tierName": "Medium",
+      "difficulty": 2,
+      "words": [
+        "fish", "bird", "tree", "frog", "star", "moon", "rain",
+        "snow", "blue", "play", "jump", "sing", "cook", "read",
+        "draw", "milk", "cake", "ball", "book", "door", "game",
+        "hand", "home", "king", "lake", "leaf", "nest", "ring",
+        "ship", "song", "wood", "wish", "wave", "bell", "farm",
+        "flag", "gift", "gold", "hill", "kite", "lamp", "lion",
+        "nest", "park", "road", "seed", "tent", "wall", "yard",
+        "army", "bear", "coin", "drum", "fawn", "glow", "harp",
+        "jolt", "keen", "loom", "moss", "opal", "plow", "quay",
+        "robe", "swan", "tusk", "veil", "wren", "yawn", "zoom"
+      ]
+    },
+    {
+      "tierName": "Hard",
+      "difficulty": 3,
+      "words": [
+        "apple", "bread", "candy", "dance", "eagle", "fairy",
+        "giant", "happy", "jelly", "lemon", "magic", "ocean",
+        "paint", "queen", "robot", "tiger", "uncle", "video",
+        "water", "zebra", "beach", "chair", "cloud", "dream",
+        "earth", "floor", "grape", "heart", "igloo", "jewel",
+        "koala", "light", "mouse", "ninja", "olive", "piano",
+        "river", "snake", "tooth", "unity", "voice", "wheel",
+        "train", "brave", "chest", "crown", "feast", "guard",
+        "house", "kneel", "noble", "plant", "quest", "scout",
+        "sheep", "stone", "tower", "world", "young", "smile",
+        "blaze", "charm", "drift", "ember", "frost", "gleam",
+        "hazel", "ivory", "joust", "knack", "latch", "marsh"
+      ]
+    }
+  ],
+  "blockedWords": [
+    "damn", "hell", "crap", "stupid", "idiot", "dumb", "suck",
+    "hate", "kill", "die", "dead", "death", "blood", "murder",
+    "fight", "punch", "shoot", "stab", "weapon", "gun", "knife",
+    "poison", "beast", "demon", "devil", "ghost", "skull", "grave"
+  ]
+}

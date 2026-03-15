@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -40,10 +40,10 @@ public class AssetManager : MonoBehaviour
 
     }
 
-    
+
     void Update()
     {
-        
+
     }
 
     public static GameMode GetGameMode()
@@ -89,3 +89,4 @@ public class AssetManager : MonoBehaviour
         backgroundImg.sprite = backgrounds[(int)gameMode];
     }
 }
+

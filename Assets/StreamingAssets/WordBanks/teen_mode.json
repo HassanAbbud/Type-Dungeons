@@ -1,0 +1,90 @@
+{
+  "bankName": "Teen Mode",
+  "version": "1.0",
+  "description": "Default word bank for teen/general audience. Medieval themed where possible.",
+  "tiers": [
+    {
+      "tierName": "Easy",
+      "difficulty": 1,
+      "words": [
+        "the", "and", "for", "are", "but", "not", "you", "all",
+        "can", "had", "her", "was", "one", "our", "out", "day",
+        "get", "has", "him", "his", "how", "its", "may", "new",
+        "now", "old", "see", "way", "who", "did", "let", "say",
+        "she", "too", "use", "man", "run", "big", "end", "put",
+        "ask", "own", "set", "try", "far", "low", "act", "add",
+        "age", "ago", "air", "arm", "art", "bad", "bag", "bed",
+        "bit", "box", "boy", "bus", "car", "cut", "dog", "eat",
+        "eye", "few", "fly", "got", "gun", "hat", "hit", "hot",
+        "ice", "job", "key", "lay", "leg", "lie", "lot", "map",
+        "king", "lord", "gold", "fire", "dark", "iron", "gate",
+        "wall", "helm", "axe", "bow", "war", "foe", "ale", "gem",
+        "oak", "fur", "pit", "den", "mud", "ash", "ore", "kin"
+      ]
+    },
+    {
+      "tierName": "Medium",
+      "difficulty": 2,
+      "words": [
+        "about", "after", "again", "below", "could", "every",
+        "first", "found", "great", "house", "large", "learn",
+        "never", "other", "place", "plant", "point", "right",
+        "small", "sound", "spell", "still", "study", "their",
+        "there", "these", "thing", "think", "three", "water",
+        "where", "which", "world", "would", "write", "being",
+        "black", "bring", "build", "carry", "clean", "close",
+        "cover", "early", "earth", "eight", "field", "force",
+        "green", "group", "heart", "heavy", "horse", "human",
+        "image", "known", "light", "money", "month", "night",
+        "north", "order", "paper", "power", "press", "quick",
+        "river", "round", "scene", "share", "short", "since",
+        "sleep", "south", "space", "stand", "start", "stone",
+        "story", "sword", "table", "taken", "third", "today",
+        "tower", "trade", "train", "treat", "under", "usual",
+        "value", "watch", "woman", "young", "armor", "blade",
+        "brave", "crown", "feast", "flame", "forge", "guard",
+        "guild", "honor", "kneel", "lance", "manor", "noble",
+        "quest", "reign", "rogue", "scout", "siege", "smith",
+        "spell", "sworn", "thief", "torch", "vault", "vigor"
+      ]
+    },
+    {
+      "tierName": "Hard",
+      "difficulty": 3,
+      "words": [
+        "absolute", "accident", "actually", "approach", "audience",
+        "balanced", "becoming", "behavior", "building", "business",
+        "callback", "campaign", "capacity", "category", "centered",
+        "ceremony", "champion", "changing", "chapters", "chemical",
+        "children", "choosing", "climbing", "collapse", "combined",
+        "commerce", "commonly", "communal", "compared", "complete",
+        "composed", "concerns", "conclude", "concrete", "conflict",
+        "congress", "conjured", "conquest", "consider", "contains",
+        "continue", "contract", "controls", "convince", "corridor",
+        "coverage", "creation", "creative", "criminal", "critical",
+        "crossing", "currency", "cylinder", "Database", "December",
+        "decision", "declined", "definite", "delicate", "delivery",
+        "demanded", "designed", "detailed", "develops", "dialogue",
+        "directed", "discover", "dispatch", "disorder", "distinct",
+        "doctrine", "document", "domestic", "dominant", "dramatic",
+        "dungeon", "dynasty", "alchemy", "assassin", "barbican",
+        "bastion", "betrayal", "bulwark", "catapult", "cavalier",
+        "chambers", "chivalry", "coliseum", "compound", "conquest",
+        "covenant", "crossbow", "crusader", "darkened", "dominion",
+        "drawbridge", "enchanted", "falchion", "familiar",
+        "fortress", "garrison", "grimoire", "guardian", "heirloom",
+        "heraldry", "infantry", "inscribe", "ironclad", "joust",
+        "kindling", "labyrinth", "merchant", "midnight", "monolith",
+        "nomadic", "obsidian", "paladin", "paragon", "peasantry",
+        "portcullis", "prophecy", "ramparts", "reliquary",
+        "sanctum", "sentinel", "sorcerer", "squire", "stronghold",
+        "talisman", "templar", "tribunal", "unbroken", "vanguard",
+        "vexation", "warcraft", "wrathful", "yearning", "zealotry"
+      ]
+    }
+  ],
+  "blockedWords": [
+    "damn", "hell", "crap", "stupid", "idiot", "dumb", "suck",
+    "hate", "kill", "die", "dead", "death", "blood", "murder"
+  ]
+}
