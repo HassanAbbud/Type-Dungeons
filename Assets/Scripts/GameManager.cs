@@ -275,6 +275,8 @@ public class GameManager : MonoBehaviour
                     OnTimerExpired?.Invoke();
                     TakeDamage(1);
 
+                    SoundManager.PlaySound(SoundType.TAKING_DMG);
+
                     if (CurrentState == GameState.Playing)
                         RemainingTime = GetLevelTime();
                 }

@@ -12,6 +12,9 @@ public enum SoundType
     BGM_Kid1,
     BGM_Kid2,
     BTN_CLICK,
+    WORD_COMPLETE,
+    TYPING_ERROR,
+    TAKING_DMG,
     ANNOUNCER
 }
 
@@ -78,17 +81,13 @@ public class SoundManager : MonoBehaviour
                 instance.bgmSource.volume = bgmVolume * Scale;
                 instance.bgmSource.Play();
                 break;
-
-            case SoundType.BTN_CLICK:
-                AudioClip clickClip = instance.audioClips[(int)type];
-                instance.sfxSource.PlayOneShot(clickClip, sfxVolume * Scale);
-                break;
-
             case SoundType.ANNOUNCER:
                 AudioClip announcerClip = instance.announcerClips[announcerClipIdx];
                 EnqueueAnnouncement(announcerClip, announcerVolume * Scale);
                 break;
             default:
+                AudioClip clickClip = instance.audioClips[(int)type];
+                instance.sfxSource.PlayOneShot(clickClip, sfxVolume * Scale);
                 break;
         }
     }

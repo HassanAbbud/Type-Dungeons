@@ -128,6 +128,8 @@ public class TypingInput : MonoBehaviour
         GameManager.Instance?.RegisterKeystroke(false);
         OnWrongKey?.Invoke(typed, expected);
 
+        SoundManager.PlaySound(SoundType.TYPING_ERROR);
+        
         if (uiManager != null)
             uiManager.FlashWrongKey();
 
@@ -169,6 +171,9 @@ public class TypingInput : MonoBehaviour
         float accuracy = totalKeysThisWord == 0 ? 1f : (float)correctKeysThisWord / totalKeysThisWord;
         GameManager.Instance?.CompleteWord(accuracy, currentWord.Length);
         OnWordDone?.Invoke(currentWord, accuracy);
+
+        SoundManager.PlaySound(SoundType.WORD_COMPLETE);
+        
         LoadNextWord();
     }
 
