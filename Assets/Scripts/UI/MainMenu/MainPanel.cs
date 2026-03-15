@@ -17,7 +17,7 @@ public class MainPanel : BasePanel<MainPanel>
         btnStart.onClick.AddListener(() =>
         {
             SoundManager.PlaySound(SoundType.BTN_CLICK);
-            SoundManager.PlaySound(SoundType.ANNOUNCER);
+            SoundManager.PlaySound(SoundType.ANNOUNCER, AnnouncerType.GAME_START);
             SceneManager.LoadScene("GameplayScene");
         });
 

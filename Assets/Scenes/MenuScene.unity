@@ -4869,6 +4869,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: cb8e990efd984a64d994658f71007e12, type: 3}
   announcerClips:
   - {fileID: 8300000, guid: fffe53eefc089e1489bca160f87c535d, type: 3}
+  - {fileID: 8300000, guid: bf6ab58da1f31534d90980c61c3de7f1, type: 3}
 --- !u!82 &1549908735
 AudioSource:
   m_ObjectHideFlags: 0

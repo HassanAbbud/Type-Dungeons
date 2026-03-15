@@ -18,6 +18,13 @@ public enum SoundType
     ANNOUNCER
 }
 
+public enum AnnouncerType
+{
+    GAME_START,
+    GAME_OVER,
+
+}
+
 [RequireComponent(typeof(AudioSource))]
 public class SoundManager : MonoBehaviour
 {
@@ -58,7 +65,7 @@ public class SoundManager : MonoBehaviour
     {
         //
     }
-    private static void StopBGM()
+    public static void StopBGM()
     {
         if (instance.bgmSource.isPlaying && instance.bgmSource.loop)
         {
@@ -68,7 +75,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public static void PlaySound(SoundType type, int announcerClipIdx = 0)
+    public static void PlaySound(SoundType type, AnnouncerType announcerType = 0)
     {
         if (instance == null) return;
 
@@ -82,7 +89,7 @@ public class SoundManager : MonoBehaviour
                 instance.bgmSource.Play();
                 break;
             case SoundType.ANNOUNCER:
-                AudioClip announcerClip = instance.announcerClips[announcerClipIdx];
+                AudioClip announcerClip = instance.announcerClips[(int)announcerType];
                 EnqueueAnnouncement(announcerClip, announcerVolume * Scale);
                 break;
             default:
@@ -205,6 +212,10 @@ public class SoundManager : MonoBehaviour
                     break;
             }
         }
+    }
 
+    public static void AnnounceGameOver()
+    {
+        PlaySound(SoundType.ANNOUNCER, AnnouncerType.GAME_OVER);
     }
 }
