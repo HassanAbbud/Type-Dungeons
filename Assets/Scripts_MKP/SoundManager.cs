@@ -22,7 +22,8 @@ public enum AnnouncerType
 {
     GAME_START,
     GAME_OVER,
-
+    KING_COMBO, // 10 perfect words in a row
+    GODLIKE // 30 perfect words in a row
 }
 
 [RequireComponent(typeof(AudioSource))]
@@ -217,5 +218,13 @@ public class SoundManager : MonoBehaviour
     public static void AnnounceGameOver()
     {
         PlaySound(SoundType.ANNOUNCER, AnnouncerType.GAME_OVER);
+    }
+
+    public static void AnnounceCombo(int combo)
+    {
+        if (combo >= 30 && combo % 10 == 0)
+            PlaySound(SoundType.ANNOUNCER, AnnouncerType.GODLIKE);
+        else if (combo % 10 == 0)
+            PlaySound(SoundType.ANNOUNCER, AnnouncerType.KING_COMBO);
     }
 }

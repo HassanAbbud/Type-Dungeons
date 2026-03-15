@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     public event Action<GameState> OnGameStateChanged;
     public event Action<int> OnCoinsChanged;              // newCoinTotal
     public event Action<int, int> OnWordProgressChanged;  // (wordsThisLevel, wordsNeeded)
+    public event Action<int> OnReachingCombo;
     #endregion
 
     public enum GameState { MainMenu, Playing, Paused, GameOver }
@@ -68,6 +69,7 @@ public class GameManager : MonoBehaviour
     public int WordsCompletedThisLevel { get; private set; }
     public int WordsNeededThisLevel => wordsPerLevel + (CurrentLevel - 1) * wordsPerLevelIncrease;
     public int TotalWordsCompleted { get; private set; }
+    public int Combo { get; private set; }
 
     // Accuracy — fed by the typing input script
     public int TotalKeysPressed { get; private set; }
@@ -94,6 +96,7 @@ public class GameManager : MonoBehaviour
         WordsCompletedThisLevel = 0;
         TotalWordsCompleted = 0;
         RemainingTime = GetLevelTime();
+        Combo = 0;
 
         Time.timeScale = 1f;
         SetState(GameState.Playing);
@@ -165,8 +168,18 @@ public class GameManager : MonoBehaviour
         Score += wordScore;
         OnScoreChanged?.Invoke(Score);
 
+        // --- Comboing ---
+        if (wordAccuracy == 1f)
+            Combo++;
+        else
+            Combo = 0;
+        //Debug.Log("Combo: " + Combo);
+
+        if (Combo != 0 && Combo % 10 == 0)
+            OnReachingCombo?.Invoke(Combo);
+
         // --- Coins for store (Release 2.0) ---
-        int coinsEarned = Mathf.Max(1, wordLength / 2);
+            int coinsEarned = Mathf.Max(1, wordLength / 2);
         Coins += coinsEarned;
         OnCoinsChanged?.Invoke(Coins);
 
