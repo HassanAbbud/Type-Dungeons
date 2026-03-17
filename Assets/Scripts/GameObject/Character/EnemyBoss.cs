@@ -1,16 +1,6 @@
 using UnityEngine;
 
-public class EnemyBoss : MonoBehaviour
+public class EnemyBoss : EnemyBase
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public new float health = 100f;                                                  // Boss health points
 }
