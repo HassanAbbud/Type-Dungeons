@@ -1,7 +1,6 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 /// <summary>
@@ -70,13 +69,21 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private Button menuButton;
     #endregion
 
+    #region Accuracy Panel (UI_PanelAccuracy)
+    [Header("=== ACCURACY PANEL ===")]
+    [SerializeField] private GameObject accuracyPanel;
+    [SerializeField] private TMP_Text txtCorrectNum;
+    [SerializeField] private TMP_Text txtWordsGenerated;
+    [SerializeField] private TMP_Text txtCorrectRate;
+    [SerializeField] private Button mainMenuBtn;
+    #endregion
+
     [Header("Settings")]
     [SerializeField] private Color timerWarningColor = new Color(0.9f, 0.2f, 0.2f);
     [SerializeField] private Color timerNormalColor = Color.white;
     [SerializeField] private float timerWarningThreshold = 10f;
 
     private float maxLevelTime;
-
     private string currentWord;
 
     #region Lifecycle
@@ -93,7 +100,7 @@ public class GameUIManager : MonoBehaviour
             gm.OnLevelChanged += UpdateLevel;
             gm.OnWordProgressChanged += UpdateWordProgress;
             gm.OnGameStateChanged += HandleGameStateChanged;
-            gm.OnPlayerDied += ShowGameOver;
+            gm.OnPlayerDied += ShowAccuracyPanel;
         }
 
         if (WordDifficultyScaler.Instance != null)
@@ -104,21 +111,19 @@ public class GameUIManager : MonoBehaviour
         if (pauseQuitButton != null) pauseQuitButton.onClick.AddListener(OnPauseQuitClicked);
         if (retryButton != null) retryButton.onClick.AddListener(OnRetryClicked);
         if (menuButton != null) menuButton.onClick.AddListener(OnMenuClicked);
+        if (mainMenuBtn != null) mainMenuBtn.onClick.AddListener(OnAccuracyMainMenuClicked);
 
         // HUD-only mode: start game immediately
         if (hudPanel != null) hudPanel.SetActive(true);
         if (pausePanel != null) pausePanel.SetActive(false);
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        if (accuracyPanel != null) accuracyPanel.SetActive(false);
 
         GameManager.Instance?.StartGame();
     }
 
     private void Update()
     {
-
-        if (!string.IsNullOrEmpty(currentWord))
-            Debug.Log($"[GameUIManager] currentWord: {currentWord}");
-
         // Pause toggle
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -151,7 +156,7 @@ public class GameUIManager : MonoBehaviour
             gm.OnLevelChanged -= UpdateLevel;
             gm.OnWordProgressChanged -= UpdateWordProgress;
             gm.OnGameStateChanged -= HandleGameStateChanged;
-            gm.OnPlayerDied -= ShowGameOver;
+            gm.OnPlayerDied -= ShowAccuracyPanel;
         }
 
         if (WordDifficultyScaler.Instance != null)
@@ -170,14 +175,13 @@ public class GameUIManager : MonoBehaviour
                 if (hudPanel != null) hudPanel.SetActive(true);
                 if (pausePanel != null) pausePanel.SetActive(false);
                 if (gameOverPanel != null) gameOverPanel.SetActive(false);
+                if (accuracyPanel != null) accuracyPanel.SetActive(false);
                 break;
             case GameManager.GameState.Paused:
                 if (pausePanel != null) pausePanel.SetActive(true);
                 break;
             case GameManager.GameState.GameOver:
-                if (hudPanel != null) hudPanel.SetActive(false);
-                if (pausePanel != null) pausePanel.SetActive(false);
-                if (gameOverPanel != null) gameOverPanel.SetActive(true);
+                // Handled by ShowAccuracyPanel via OnPlayerDied
                 break;
         }
     }
@@ -253,20 +257,31 @@ public class GameUIManager : MonoBehaviour
 
     #endregion
 
-    #region Game Over
+    #region Accuracy Panel
 
-    private void ShowGameOver()
+    private void ShowAccuracyPanel()
     {
-        if (hudPanel != null) hudPanel.SetActive(false);
-        if (gameOverPanel != null) gameOverPanel.SetActive(true);
+        // Keep HUD visible behind the accuracy panel
+        if (pausePanel != null) pausePanel.SetActive(false);
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        if (accuracyPanel != null) accuracyPanel.SetActive(true);
 
         var gm = GameManager.Instance;
         if (gm == null) return;
 
-        if (finalScoreText != null) finalScoreText.text = $"Score: {gm.Score:N0}";
-        if (finalAccuracyText != null) finalAccuracyText.text = $"Accuracy: {gm.Accuracy * 100f:F1}%";
-        if (finalLevelText != null) finalLevelText.text = $"Level Reached: {gm.CurrentLevel}";
-        if (finalWordsText != null) finalWordsText.text = $"Words Typed: {gm.TotalWordsCompleted}";
+        if (txtCorrectNum != null)
+            txtCorrectNum.text = $"{gm.CorrectKeysPressed}";
+        if (txtWordsGenerated != null)
+            txtWordsGenerated.text = $"{gm.TotalWordsCompleted}";
+        if (txtCorrectRate != null)
+            txtCorrectRate.text = $"{gm.Accuracy * 100f:F1}%";
+    }
+
+    private void OnAccuracyMainMenuClicked()
+    {
+        SoundManager.PlaySound(SoundType.BTN_CLICK);
+        Time.timeScale = 1f;
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MenuScene");
     }
 
     #endregion
