@@ -7421,9 +7421,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   maxHealth: 5
   startingLevel: 1
-  levelTimeSeconds: 60
+  levelTimeSeconds: 2
   timePerLevelReduction: 5
-  minimumLevelTime: 20
+  minimumLevelTime: 10
   wordsPerLevel: 10
   wordsPerLevelIncrease: 2
   baseScorePerWord: 100
@@ -9368,10 +9368,6 @@ MonoBehaviour:
   healthText: {fileID: 808619869}
   heartIcons:
   - {fileID: 297122755}
-  - {fileID: 975343991}
-  - {fileID: 2108359183}
-  - {fileID: 978119846}
-  - {fileID: 334956915}
   scoreText: {fileID: 0}
   coinsText: {fileID: 370817681}
   timerText: {fileID: 1228674512}
@@ -9391,6 +9387,11 @@ MonoBehaviour:
   finalWordsText: {fileID: 0}
   retryButton: {fileID: 0}
   menuButton: {fileID: 0}
+  accuracyPanel: {fileID: 1319014228}
+  txtCorrectNum: {fileID: 115280756}
+  txtWordsGenerated: {fileID: 509034568}
+  txtCorrectRate: {fileID: 1348744601}
+  mainMenuBtn: {fileID: 1852208191}
   timerWarningColor: {r: 0.9, g: 0.2, b: 0.2, a: 1}
   timerNormalColor: {r: 1, g: 1, b: 1, a: 1}
   timerWarningThreshold: 10
