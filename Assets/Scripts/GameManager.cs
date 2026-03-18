@@ -74,9 +74,14 @@ public class GameManager : MonoBehaviour
     public int CorrectKeysPressed { get; private set; }
     public float Accuracy => TotalKeysPressed == 0 ? 1f : (float)CorrectKeysPressed / TotalKeysPressed;
 
-    // Coins for store power-ups (Release 2.0 ready)
+    // Coins for store power-ups (Release 2.0 ready), nmendo16
     public int Coins { get; private set; }
-    #endregion
+
+    // Shield Bonus (Release 2.0 ready) — Applies +20% accuracy multiplier to word scoring, nmendo16
+    private float shieldAccuracyBonus = 1.0f;
+    public float ShieldAccuracyBonus => shieldAccuracyBonus;
+    
+#endregion
 
     private Coroutine timerCoroutine;
 
@@ -161,12 +166,13 @@ public class GameManager : MonoBehaviour
         if (wordAccuracy >= 0.95f)
             wordScore = Mathf.RoundToInt(wordScore * accuracyBonusMultiplier);
         wordScore = Mathf.RoundToInt(wordScore * (1f + (CurrentLevel - 1) * 0.15f));
+        wordScore = Mathf.RoundToInt(wordScore * shieldAccuracyBonus);  // Apply Shield bonus if active, nmendo16
 
         Score += wordScore;
         OnScoreChanged?.Invoke(Score);
 
         // --- Coins for store (Release 2.0) ---
-        int coinsEarned = Mathf.Max(1, wordLength / 2);
+        int coinsEarned = Mathf.Max(1, wordLength / 2) * 10; //edited "* 10" for playtesting, nmendo16
         Coins += coinsEarned;
         OnCoinsChanged?.Invoke(Coins);
 
@@ -224,6 +230,20 @@ public class GameManager : MonoBehaviour
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
     }
 
+    /// <summary>Apply Shield power-up: +20% accuracy bonus to next words.</summary>
+    public void ApplyShieldBonus()  // nmendo16
+    {
+        shieldAccuracyBonus = 1.2f;
+        Debug.Log("[GameManager] Shield bonus activated: +20% accuracy multiplier");
+    }
+
+    /// <summary>Reset Shield bonus (called on level up or game over).</summary>
+    public void ResetShieldBonus()  // nmendo16
+    {
+        shieldAccuracyBonus = 1.0f;
+        Debug.Log("[GameManager] Shield bonus reset.");
+    }
+
     #endregion
 
     #region Internals
@@ -233,6 +253,7 @@ public class GameManager : MonoBehaviour
         CurrentLevel++;
         WordsCompletedThisLevel = 0;
         RemainingTime = GetLevelTime();
+        ResetShieldBonus();  // Clear shield bonus on level up, nmendo16
         OnLevelChanged?.Invoke(CurrentLevel);
         OnWordProgressChanged?.Invoke(0, WordsNeededThisLevel);
     }
@@ -251,6 +272,7 @@ public class GameManager : MonoBehaviour
 
         if (newState == GameState.GameOver)
         {
+            ResetShieldBonus();  // Clear shield bonus on game over, nmendo16
             Time.timeScale = 0f;
             if (timerCoroutine != null)
             {

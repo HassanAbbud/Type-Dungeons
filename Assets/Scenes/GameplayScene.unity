@@ -5526,6 +5526,59 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 990487180}
   m_CullTransparentMesh: 1
+--- !u!1 &1006880571
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1006880573}
+  - component: {fileID: 1006880572}
+  m_Layer: 0
+  m_Name: PowerupStore
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1006880572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1006880571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 010680ae7c6ed17499293ff04a4e5dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PowerUpStore
+  swordPrice: 50
+  shieldPrice: 100
+  bookPrice: 100
+  potionPrice: 150
+  cloverPrice: 200
+  swordWordLength: 3
+  timerFreezeDuration5: 5
+  timerFreezeDuration10: 10
+  cloverHealthBoost: 1
+--- !u!4 &1006880573
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1006880571}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 485.24918, y: 236.38164, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1011353719
 GameObject:
   m_ObjectHideFlags: 0
@@ -9560,6 +9613,7 @@ GameObject:
   - component: {fileID: 2017202169}
   - component: {fileID: 2017202168}
   - component: {fileID: 2017202172}
+  - component: {fileID: 2017202173}
   m_Layer: 5
   m_Name: Canvas-GameLayout
   m_TagString: Untagged
@@ -9702,6 +9756,27 @@ MonoBehaviour:
   timerWarningColor: {r: 0.9, g: 0.2, b: 0.2, a: 1}
   timerNormalColor: {r: 1, g: 1, b: 1, a: 1}
   timerWarningThreshold: 10
+--- !u!114 &2017202173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2017202167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5809f5a1590aa7d4e95f9f76e6078325, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PowerUpUIManager
+  swordButton: {fileID: 1113567666}
+  shieldButton: {fileID: 1770606116}
+  bookButton: {fileID: 1551665453}
+  potionButton: {fileID: 789087456}
+  cloverButton: {fileID: 228503850}
+  enabledButtonColor: {r: 1, g: 1, b: 1, a: 1}
+  disabledButtonColor: {r: 0.4, g: 0.4, b: 0.4, a: 0.7}
+  clickAnimationScale: 0.9
+  clickAnimationDuration: 0.1
 --- !u!1 &2045798728
 GameObject:
   m_ObjectHideFlags: 0
@@ -10177,3 +10252,4 @@ SceneRoots:
   - {fileID: 329608122}
   - {fileID: 1391637899}
   - {fileID: 835424400}
+  - {fileID: 1006880573}
