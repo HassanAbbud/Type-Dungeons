@@ -6,11 +6,11 @@ using UnityEngine;
 /// Singleton that coordinates with GameManager to apply power-up effects.
 /// 
 /// Power-ups:
-///   Sword (50 coins)   → Completes current word instantly
-///   Shield (100 coins) → Boosts accuracy by 20% for next words
-///   Book (100 coins)   → Freezes timer for 5 seconds
-///   Potion (150 coins) → Freezes timer for 10 seconds
-///   Clover (200 coins) → Adds 1 life
+///   item1 (50 coins)   → Completes current word instantly
+///   item2 (100 coins) → Boosts accuracy by 20% for next words
+///   item3 (100 coins)   → Freezes timer for 5 seconds
+///   item4 (150 coins) → Freezes timer for 10 seconds
+///   item5 (200 coins) → Adds 1 life
 /// </summary>
 public class PowerUpStore : MonoBehaviour
 {
@@ -205,7 +205,7 @@ public class PowerUpStore : MonoBehaviour
     /// </summary>
     private void ActivateShield(GameManager gm)
     {
-        //gm.ApplyShieldBonus();
+        gm.ApplyShieldBonus();
     }
 
     /// <summary>

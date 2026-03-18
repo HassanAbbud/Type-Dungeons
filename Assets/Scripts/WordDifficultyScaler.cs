@@ -225,8 +225,13 @@ public class WordDifficultyScaler : MonoBehaviour
 
         var oldProfile = FindProfile(oldLevel);
         var newProfile = FindProfile(newLevel);
-        if (oldProfile?.profileName != newProfile?.profileName)
+
+       // Fire if profile CHANGED, OR if this is the first time (oldLevel was 0 initially), nmendo16
+        if (oldProfile?.profileName != newProfile?.profileName || newLevel == 1)
+        {
             OnDifficultyProfileChanged?.Invoke(newProfile?.profileName ?? "Default");
+            Debug.Log($"[WordDifficultyScaler] Profile changed/initialized to: {newProfile?.profileName}");
+        }
     }
 
     private DifficultyProfile FindProfile(int level)
