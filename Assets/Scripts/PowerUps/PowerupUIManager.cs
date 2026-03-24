@@ -34,9 +34,9 @@ public class PowerUpUIManager : MonoBehaviour
     #region Button References (Configure in Inspector)
     [Header("=== Power-up Buttons ===")]
     [SerializeField] private Button swordButton;
-    [SerializeField] private Button shieldButton;
-    [SerializeField] private Button bookButton;
     [SerializeField] private Button potionButton;
+    [SerializeField] private Button bookButton;
+    [SerializeField] private Button shieldButton;
     [SerializeField] private Button cloverButton;
     #endregion
 
