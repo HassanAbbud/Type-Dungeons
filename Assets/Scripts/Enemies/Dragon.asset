@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8086825688fab4d3eaa4bee2a6770a68, type: 3}
+  m_Name: Dragon
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyType
+  enemyName: Dragon
+  description: A dragon boss
+  sprite: {fileID: 0}
+  deathSprite: {fileID: 0}
+  tintColor: {r: 1, g: 1, b: 1, a: 1}
+  spriteScale: 1
+  animatorController: {fileID: 0}
+  wordsToDefeat: 3
+  wordTier: 3
+  damage: 2
+  customTimer: 20
+  approachSpeed: 0
+  coinDrop: 5
+  bonusScore: 200
+  minLevel: 3
+  maxLevel: 99
+  spawnWeight: 1
+  spawnSound: {fileID: 0}
+  deathSound: {fileID: 0}
+  attackSound: {fileID: 0}

@@ -1,0 +1,7 @@
+feat: Implement coin system and power-up store
+
+- Added PowerUpStore.cs for purchase logic
+- Added PowerUpUIManager.cs for UI management
+- Modified GameManager.cs with Shield bonus support, commented with "nmendo16" 
+- Added 10x coin multiplier for playtesting
+- Team: Ready for integration and testing on GameplayScene
