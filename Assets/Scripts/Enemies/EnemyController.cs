@@ -23,6 +23,7 @@ public class EnemyController : MonoBehaviour
     #region Inspector (set on the prefab)
     [Header("Visual References")]
     [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Image enemyImage;    //nmendo16, to show enemy sprite above the Canvas ScreenSpace-Overlay
     [SerializeField] private TMP_Text wordBubbleText;
     [SerializeField] private Image healthBarFill;
 
@@ -72,6 +73,12 @@ public class EnemyController : MonoBehaviour
             transform.localScale = Vector3.one * type.spriteScale;
         }
 
+        if (enemyImage != null) //nmendo16 sprite image to appear
+        {
+            enemyImage.sprite = type.sprite;
+            enemyImage.color = type.tintColor;
+        }
+
         // Animator
         if (animator != null && type.animatorController != null)
             animator.runtimeAnimatorController = type.animatorController;
@@ -103,6 +110,14 @@ public class EnemyController : MonoBehaviour
                 ? Color.white
                 : (EnemyData != null ? EnemyData.tintColor * 0.7f : Color.gray);
         }
+        //nmendo16 
+        if (enemyImage != null)
+        {
+            enemyImage.color = isTarget
+                ? Color.white
+                : (EnemyData != null ? EnemyData.tintColor * 0.7f : Color.gray);
+        }
+
     }
 
     /// <summary>
@@ -224,6 +239,9 @@ public class EnemyController : MonoBehaviour
         // Death visual
         if (spriteRenderer != null && EnemyData.deathSprite != null)
             spriteRenderer.sprite = EnemyData.deathSprite;
+        //nmendo16
+        if (enemyImage != null && EnemyData.deathSprite != null)
+            enemyImage.sprite = EnemyData.deathSprite;
 
         // Death sound
         PlayClip(EnemyData.deathSound);
