@@ -2,12 +2,6 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// Central game state manager for Type Dungeons.
-/// Singleton — all other scripts communicate through events.
-/// Owns: health, level, time, score.
-/// Words route through WordDifficultyScaler → WordGenerator.
-/// </summary>
 public class GameManager : MonoBehaviour
 {
     #region Singleton
@@ -24,16 +18,16 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    #region Events — UI, Sound, etc. subscribe to these
-    public event Action<int, int> OnHealthChanged;        // (current, max)
+    #region Events
+    public event Action<int, int> OnHealthChanged;
     public event Action OnPlayerDied;
-    public event Action<int> OnLevelChanged;              // newLevel
-    public event Action<int> OnScoreChanged;              // newScore
-    public event Action<float> OnTimerTick;               // remainingTime
+    public event Action<int> OnLevelChanged;
+    public event Action<int> OnScoreChanged;
+    public event Action<float> OnTimerTick;
     public event Action OnTimerExpired;
     public event Action<GameState> OnGameStateChanged;
-    public event Action<int> OnCoinsChanged;              // newCoinTotal
-    public event Action<int, int> OnWordProgressChanged;  // (wordsThisLevel, wordsNeeded)
+    public event Action<int> OnCoinsChanged;
+    public event Action<int, int> OnWordProgressChanged;
     public event Action<int> OnReachingCombo;
     #endregion
 
@@ -59,7 +53,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float accuracyBonusMultiplier = 1.5f;
     #endregion
 
-    #region Runtime State (read-only for other scripts)
+    #region Runtime State
     public int CurrentHealth { get; private set; }
     public int MaxHealth => maxHealth;
     public int CurrentLevel { get; private set; }
@@ -71,26 +65,27 @@ public class GameManager : MonoBehaviour
     public int TotalWordsCompleted { get; private set; }
     public int Combo { get; private set; }
 
-    // Accuracy — fed by the typing input script
     public int TotalKeysPressed { get; private set; }
     public int CorrectKeysPressed { get; private set; }
     public float Accuracy => TotalKeysPressed == 0 ? 1f : (float)CorrectKeysPressed / TotalKeysPressed;
 
-    // Coins for store power-ups (Release 2.0 ready)
     public int Coins { get; private set; }
+
+    // Accuracy Bonus (Potion) — +20% accuracy multiplier
+    private float accuracyBonusMultiplierActive = 1.0f;
+    public float AccuracyBonusMultiplierActive => accuracyBonusMultiplierActive;
     #endregion
 
     private Coroutine timerCoroutine;
 
     #region Public API
 
-    /// <summary>Call from the Play button. Resets everything and starts the run.</summary>
     public void StartGame()
     {
         CurrentHealth = maxHealth;
         CurrentLevel = startingLevel;
         Score = 0;
-        Coins = 0;
+        Coins = 1000;
         TotalKeysPressed = 0;
         CorrectKeysPressed = 0;
         WordsCompletedThisLevel = 0;
@@ -101,14 +96,12 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         SetState(GameState.Playing);
 
-        // Fire initial state so UI can update immediately
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
         OnLevelChanged?.Invoke(CurrentLevel);
         OnScoreChanged?.Invoke(Score);
         OnCoinsChanged?.Invoke(Coins);
         OnWordProgressChanged?.Invoke(0, WordsNeededThisLevel);
 
-        // Stop any leftover timer from a previous run, then start fresh
         if (timerCoroutine != null)
             StopCoroutine(timerCoroutine);
         timerCoroutine = StartCoroutine(LevelTimerCoroutine());
@@ -149,12 +142,6 @@ public class GameManager : MonoBehaviour
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
     }
 
-    /// <summary>
-    /// Called when the player successfully types a complete word.
-    /// Handles scoring, coin drops, and level advancement.
-    /// </summary>
-    /// <param name="wordAccuracy">0.0–1.0 ratio of correct keystrokes for this word</param>
-    /// <param name="wordLength">Number of characters in the completed word</param>
     public void CompleteWord(float wordAccuracy, int wordLength)
     {
         if (CurrentState != GameState.Playing) return;
@@ -165,21 +152,23 @@ public class GameManager : MonoBehaviour
             wordScore = Mathf.RoundToInt(wordScore * accuracyBonusMultiplier);
         wordScore = Mathf.RoundToInt(wordScore * (1f + (CurrentLevel - 1) * 0.15f));
 
+        // Apply active accuracy bonus (from Potion)
+        wordScore = Mathf.RoundToInt(wordScore * accuracyBonusMultiplierActive);
+
         Score += wordScore;
         OnScoreChanged?.Invoke(Score);
 
-        // --- Comboing ---
+        // --- Combo ---
         if (wordAccuracy == 1f)
             Combo++;
         else
             Combo = 0;
-        //Debug.Log("Combo: " + Combo);
 
         if (Combo != 0 && Combo % 10 == 0)
             OnReachingCombo?.Invoke(Combo);
 
-        // --- Coins for store (Release 2.0) ---
-            int coinsEarned = Mathf.Max(1, wordLength / 2);
+        // --- Coins (your x10 multiplier for testing) ---
+        int coinsEarned = Mathf.Max(1, wordLength / 2) * 10;
         Coins += coinsEarned;
         OnCoinsChanged?.Invoke(Coins);
 
@@ -192,18 +181,12 @@ public class GameManager : MonoBehaviour
             AdvanceLevel();
     }
 
-    /// <summary>Feed keystroke data from the input system for accuracy tracking.</summary>
     public void RegisterKeystroke(bool correct)
     {
         TotalKeysPressed++;
         if (correct) CorrectKeysPressed++;
     }
 
-    /// <summary>
-    /// THE single entry point for getting words.
-    /// Routes through WordDifficultyScaler for blended difficulty.
-    /// Other scripts call THIS, not WordGenerator directly.
-    /// </summary>
     public string RequestNextWord()
     {
         if (WordDifficultyScaler.Instance != null)
@@ -213,7 +196,7 @@ public class GameManager : MonoBehaviour
         return "error";
     }
 
-    // --- Power-up / Store helpers (Release 2.0 ready) ---
+    // --- Power-up / Store helpers ---
     public void AddTime(float seconds) => RemainingTime += seconds;
 
     public void AddCoins(int amount)
@@ -237,6 +220,18 @@ public class GameManager : MonoBehaviour
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
     }
 
+    public void ApplyAccuracyBonus()
+    {
+        accuracyBonusMultiplierActive = 1.2f;
+        Debug.Log("[GameManager] Accuracy Bonus (Potion) activated: +20% multiplier");
+    }
+
+    public void ResetAccuracyBonus()
+    {
+        accuracyBonusMultiplierActive = 1.0f;
+        Debug.Log("[GameManager] Accuracy Bonus reset.");
+    }
+
     #endregion
 
     #region Internals
@@ -246,6 +241,7 @@ public class GameManager : MonoBehaviour
         CurrentLevel++;
         WordsCompletedThisLevel = 0;
         RemainingTime = GetLevelTime();
+        ResetAccuracyBonus();
         OnLevelChanged?.Invoke(CurrentLevel);
         OnWordProgressChanged?.Invoke(0, WordsNeededThisLevel);
     }
@@ -264,6 +260,7 @@ public class GameManager : MonoBehaviour
 
         if (newState == GameState.GameOver)
         {
+            ResetAccuracyBonus();
             Time.timeScale = 0f;
             if (timerCoroutine != null)
             {

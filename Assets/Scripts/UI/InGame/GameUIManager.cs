@@ -1,10 +1,10 @@
-using System.Collections;
+ï»¿using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// UI Manager for Type Dungeons — HUD focused.
+/// UI Manager for Type Dungeons â€” HUD focused.
 /// The player types into a TMP_InputField. 
 /// The target word is displayed above it.
 /// Main menu code is commented out for later.
@@ -108,6 +108,7 @@ public class GameUIManager : MonoBehaviour
 
         if (WordDifficultyScaler.Instance != null)
             WordDifficultyScaler.Instance.OnDifficultyProfileChanged += UpdateDifficultyProfile;
+
 
         // Wire buttons
         if (resumeButton != null) resumeButton.onClick.AddListener(OnResumeClicked);
@@ -216,7 +217,7 @@ public class GameUIManager : MonoBehaviour
     private void UpdateScore(int score)
     {
         if (scoreText != null)
-            scoreText.text = $"Score: {score:N0}";
+            scoreText.text = $"{score:N0}";
     }
 
     private void UpdateCoins(int coins)
@@ -242,7 +243,7 @@ public class GameUIManager : MonoBehaviour
     private void UpdateLevel(int level)
     {
         if (levelText != null)
-            levelText.text = $"Level {level}";
+            levelText.text = $"{level}";
 
         if (GameManager.Instance != null)
             maxLevelTime = GameManager.Instance.RemainingTime;
@@ -321,7 +322,7 @@ public class GameUIManager : MonoBehaviour
 
     #endregion
 
-    #region Public — called by TypingInput
+    #region Public â€” called by TypingInput
 
     /// <summary>Display the target word above the input field.</summary>
     public void DisplayWord(string word)
@@ -353,10 +354,30 @@ public class GameUIManager : MonoBehaviour
 
     private IEnumerator FlashColor(TMP_Text text, Color flashColor, float duration)
     {
-        Color original = text.color;
+        Color original = Color.white;  // nmendo16 - Always reset to white
         text.color = flashColor;
         yield return new WaitForSecondsRealtime(duration);
         text.color = original;
+    }
+
+    private IEnumerator RetrySubscribeToDifficulty() //nmendo16
+    {
+        float timeout = 2f;
+        while (WordDifficultyScaler.Instance == null && timeout > 0f)
+        {
+            yield return null;
+            timeout -= Time.deltaTime;
+        }
+
+        if (WordDifficultyScaler.Instance != null)
+        {
+            WordDifficultyScaler.Instance.OnDifficultyProfileChanged += UpdateDifficultyProfile;
+            Debug.Log("[GameUIManager] Successfully subscribed to difficulty changes");
+        }
+        else
+        {
+            Debug.LogWarning("[GameUIManager] WordDifficultyScaler never became available");
+        }
     }
 
     #endregion

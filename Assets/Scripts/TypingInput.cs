@@ -32,6 +32,7 @@ public class TypingInput : MonoBehaviour
     private bool isProcessingInput = false;
 
     private GameUIManager uiManager;
+    private EnemySpawner enemySpawner;
     private int correctKeysSession = 0;
     private float sessionStartTime;
     #endregion
@@ -39,24 +40,32 @@ public class TypingInput : MonoBehaviour
     private void Start()
     {
         uiManager = FindObjectOfType<GameUIManager>();
+        enemySpawner = FindObjectOfType<EnemySpawner>();
 
         if (GameManager.Instance != null)
-        {
             GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
-        }
 
         if (typingInputField != null)
         {
             typingInputField.onValueChanged.AddListener(OnInputValueChanged);
-            // Crucial: Set to custom to prevent TMP from doing too much "helpful" formatting
             typingInputField.contentType = TMP_InputField.ContentType.Standard;
             typingInputField.lineType = TMP_InputField.LineType.SingleLine;
         }
 
         if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameManager.GameState.Playing)
-        {
             StartCoroutine(StartTypingDelayed());
-        }
+    }
+
+    private void Update()
+    {
+        if (!inputActive) return;
+        if (GameManager.Instance == null || GameManager.Instance.CurrentState != GameManager.GameState.Playing) return;
+
+        if (string.IsNullOrEmpty(currentWord) || currentWord == "waiting")
+            TryLoadWordFromEnemy();
+
+        if (typingInputField != null && !typingInputField.isFocused && typingInputField.interactable)
+            typingInputField.ActivateInputField();
     }
 
     private void OnDestroy()
@@ -71,11 +80,10 @@ public class TypingInput : MonoBehaviour
     private void OnInputValueChanged(string newText)
     {
         if (isProcessingInput || !inputActive || string.IsNullOrEmpty(currentWord)) return;
+        if (currentWord == "waiting") return;
 
         isProcessingInput = true;
 
-        // 1. Determine what was actually typed
-        // If the field is shorter than our index, they backspaced (we don't allow that)
         if (newText.Length <= currentCharIndex)
         {
             ForceCaretToEnd();
@@ -83,7 +91,6 @@ public class TypingInput : MonoBehaviour
             return;
         }
 
-        // Get the latest character
         char typed = newText[newText.Length - 1];
         totalKeysThisWord++;
 
@@ -93,13 +100,9 @@ public class TypingInput : MonoBehaviour
             : typed == expected;
 
         if (isCorrect)
-        {
             HandleCorrectKey(typed);
-        }
         else
-        {
             HandleWrongKey(typed, expected);
-        }
 
         isProcessingInput = false;
     }
@@ -116,7 +119,6 @@ public class TypingInput : MonoBehaviour
         if (uiManager != null)
             uiManager.UpdateTypedProgress(currentWord, currentCharIndex);
 
-        // Update text and force caret
         ForceCaretToEnd();
 
         if (currentCharIndex >= currentWord.Length)
@@ -129,21 +131,16 @@ public class TypingInput : MonoBehaviour
         OnWrongKey?.Invoke(typed, expected);
 
         SoundManager.PlaySound(SoundType.TYPING_ERROR);
-        
+
         if (uiManager != null)
             uiManager.FlashWrongKey();
 
-        // Revert text and force caret
         ForceCaretToEnd();
 
         if (wrongKeyPauseDuration > 0f)
             StartCoroutine(BriefInputPause(wrongKeyPauseDuration));
     }
 
-    /// <summary>
-    /// This is the core fix. We wait for the end of the frame to set the text and caret,
-    /// which bypasses TMP's internal auto-correction logic.
-    /// </summary>
     private void ForceCaretToEnd()
     {
         if (typingInputField == null) return;
@@ -152,7 +149,6 @@ public class TypingInput : MonoBehaviour
 
     private IEnumerator YieldSetCaret()
     {
-        // Wait for TMP to finish its own internal onValueChanged processing
         yield return new WaitForEndOfFrame();
 
         string validText = currentWord.Substring(0, currentCharIndex);
@@ -161,40 +157,68 @@ public class TypingInput : MonoBehaviour
         typingInputField.caretPosition = currentCharIndex;
         typingInputField.selectionAnchorPosition = currentCharIndex;
         typingInputField.selectionFocusPosition = currentCharIndex;
-
-        // This forces the mesh to update immediately
         typingInputField.ForceLabelUpdate();
     }
 
     private void CompleteCurrentWord()
     {
         float accuracy = totalKeysThisWord == 0 ? 1f : (float)correctKeysThisWord / totalKeysThisWord;
+
         GameManager.Instance?.CompleteWord(accuracy, currentWord.Length);
         OnWordDone?.Invoke(currentWord, accuracy);
 
         SoundManager.PlaySound(SoundType.WORD_COMPLETE);
-        
-        LoadNextWord();
-    }
 
-    private void LoadNextWord()
-    {
-        string newWord = GameManager.Instance.RequestNextWord();
-        if (string.IsNullOrEmpty(newWord) || newWord == "loading")
+        // Tell enemy system the word is done
+        if (enemySpawner != null)
         {
-            // Simple fallback if word bank is slow
-            currentWord = "waiting";
+            enemySpawner.NotifyWordCompleted();
+            StartCoroutine(LoadWordFromEnemyNextFrame());
         }
         else
         {
-            currentWord = newWord;
+            LoadNextWordDirect();
         }
+    }
 
+    private IEnumerator LoadWordFromEnemyNextFrame()
+    {
+        currentWord = "";
+        currentCharIndex = 0;
+        correctKeysThisWord = 0;
+        totalKeysThisWord = 0;
+        typingInputField.SetTextWithoutNotify("");
+
+        yield return null;
+
+        TryLoadWordFromEnemy();
+    }
+
+    private void TryLoadWordFromEnemy()
+    {
+        if (enemySpawner == null) return;
+
+        string enemyWord = enemySpawner.GetCurrentTargetWord();
+        if (!string.IsNullOrEmpty(enemyWord) && enemyWord != currentWord)
+            SetWord(enemyWord);
+    }
+
+    private void LoadNextWordDirect()
+    {
+        string newWord = GameManager.Instance?.RequestNextWord();
+        if (string.IsNullOrEmpty(newWord) || newWord == "loading")
+            newWord = "waiting";
+
+        SetWord(newWord);
+    }
+
+    private void SetWord(string word)
+    {
+        currentWord = word;
         currentCharIndex = 0;
         correctKeysThisWord = 0;
         totalKeysThisWord = 0;
 
-        // Complete reset of the field
         typingInputField.SetTextWithoutNotify("");
         ForceCaretToEnd();
 
@@ -207,21 +231,41 @@ public class TypingInput : MonoBehaviour
     private void HandleGameStateChanged(GameManager.GameState newState)
     {
         inputActive = (newState == GameManager.GameState.Playing);
-        typingInputField.interactable = inputActive;
+
+        if (typingInputField != null)
+            typingInputField.interactable = inputActive;
 
         if (inputActive)
         {
             sessionStartTime = Time.time;
-            typingInputField.ActivateInputField();
+            if (typingInputField != null)
+                typingInputField.ActivateInputField();
             ForceCaretToEnd();
         }
     }
 
     private IEnumerator StartTypingDelayed()
     {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.3f);
         HandleGameStateChanged(GameManager.GameState.Playing);
-        LoadNextWord();
+
+        if (enemySpawner != null)
+        {
+            float timeout = 3f;
+            while (timeout > 0f)
+            {
+                string word = enemySpawner.GetCurrentTargetWord();
+                if (!string.IsNullOrEmpty(word))
+                {
+                    SetWord(word);
+                    yield break;
+                }
+                yield return new WaitForSeconds(0.1f);
+                timeout -= 0.1f;
+            }
+        }
+
+        LoadNextWordDirect();
     }
 
     private IEnumerator BriefInputPause(float duration)
