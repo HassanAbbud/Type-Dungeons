@@ -5330,8 +5330,14 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 6cc97c5b6a21a264f976cd8a6ac41133, type: 3}
   - {fileID: 8300000, guid: 656810da01adb5b4d9048a646f59c457, type: 3}
   - {fileID: 8300000, guid: eb55345aafd8d9c45a5637e644e461b7, type: 3}
+  - {fileID: 8300000, guid: 6ff6a50d25b412542859b470c5f780f8, type: 3}
+  - {fileID: 8300000, guid: e547c654747e5994fbd622bb839196fb, type: 3}
+  - {fileID: 8300000, guid: cb8e990efd984a64d994658f71007e12, type: 3}
   announcerClips:
   - {fileID: 8300000, guid: fffe53eefc089e1489bca160f87c535d, type: 3}
+  - {fileID: 8300000, guid: bf6ab58da1f31534d90980c61c3de7f1, type: 3}
+  - {fileID: 8300000, guid: 59b5d5e892c3af24fb650e15a3f03f11, type: 3}
+  - {fileID: 8300000, guid: b0c9d5aeb88719b41990bc1da9e2ab95, type: 3}
 --- !u!82 &1549908735
 AudioSource:
   m_ObjectHideFlags: 0

@@ -101,6 +101,9 @@ public class GameUIManager : MonoBehaviour
             gm.OnWordProgressChanged += UpdateWordProgress;
             gm.OnGameStateChanged += HandleGameStateChanged;
             gm.OnPlayerDied += ShowAccuracyPanel;
+            gm.OnPlayerDied += SoundManager.StopBGM;
+            gm.OnPlayerDied += SoundManager.AnnounceGameOver;
+            gm.OnReachingCombo += SoundManager.AnnounceCombo;
         }
 
         if (WordDifficultyScaler.Instance != null)
@@ -158,6 +161,8 @@ public class GameUIManager : MonoBehaviour
             gm.OnWordProgressChanged -= UpdateWordProgress;
             gm.OnGameStateChanged -= HandleGameStateChanged;
             gm.OnPlayerDied -= ShowAccuracyPanel;
+            gm.OnPlayerDied -= SoundManager.StopBGM;
+            gm.OnPlayerDied -= SoundManager.AnnounceGameOver;
         }
 
         if (WordDifficultyScaler.Instance != null)

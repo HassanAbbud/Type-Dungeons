@@ -12,7 +12,18 @@ public enum SoundType
     BGM_Kid1,
     BGM_Kid2,
     BTN_CLICK,
+    WORD_COMPLETE,
+    TYPING_ERROR,
+    TAKING_DMG,
     ANNOUNCER
+}
+
+public enum AnnouncerType
+{
+    GAME_START,
+    GAME_OVER,
+    KING_COMBO,   // 10 perfect words in a row
+    GODLIKE       // 30 perfect words in a row
 }
 
 [RequireComponent(typeof(AudioSource))]
@@ -36,7 +47,6 @@ public class SoundManager : MonoBehaviour
 
     public static float Scale { get; set; } = 0.5f;
 
-    // ── Public volume getters (so sliders can read current values on init) ──
     public static float BGMVolume => bgmVolume;
     public static float SFXVolume => sfxVolume;
 
@@ -60,7 +70,7 @@ public class SoundManager : MonoBehaviour
         //
     }
 
-    private static void StopBGM()
+    public static void StopBGM()
     {
         if (instance.bgmSource.isPlaying && instance.bgmSource.loop)
         {
@@ -70,7 +80,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public static void PlaySound(SoundType type, int announcerClipIdx = 0)
+    public static void PlaySound(SoundType type, AnnouncerType announcerType = 0)
     {
         if (instance == null) return;
 
@@ -83,17 +93,14 @@ public class SoundManager : MonoBehaviour
                 instance.bgmSource.Play();
                 break;
 
-            case SoundType.BTN_CLICK:
-                AudioClip clickClip = instance.audioClips[(int)type];
-                instance.sfxSource.PlayOneShot(clickClip, sfxVolume * Scale);
-                break;
-
             case SoundType.ANNOUNCER:
-                AudioClip announcerClip = instance.announcerClips[announcerClipIdx];
+                AudioClip announcerClip = instance.announcerClips[(int)announcerType];
                 EnqueueAnnouncement(announcerClip, announcerVolume * Scale);
                 break;
 
             default:
+                AudioClip clip = instance.audioClips[(int)type];
+                instance.sfxSource.PlayOneShot(clip, sfxVolume * Scale);
                 break;
         }
     }
@@ -119,7 +126,6 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    /// <summary>Called by the BGM/SFX slider (labelled "SFX" in your UI = music).</summary>
     public static void UpdateBGMVolume(float value)
     {
         if (instance == null) return;
@@ -128,12 +134,10 @@ public class SoundManager : MonoBehaviour
             instance.bgmSource.volume = bgmVolume * Scale;
     }
 
-    /// <summary>Called by the VFX slider in your UI (= sound effects).</summary>
     public static void UpdateSFXVolume(float value)
     {
         if (instance == null) return;
         sfxVolume = value;
-        // sfxSource uses PlayOneShot so volume applies on next play — no live update needed
     }
 
     private static void EnqueueAnnouncement(AudioClip clip, float volume)
@@ -196,5 +200,18 @@ public class SoundManager : MonoBehaviour
                 case GameMode.Kid: PlaySound(SoundType.BGM_Kid2); break;
             }
         }
+    }
+
+    public static void AnnounceGameOver()
+    {
+        PlaySound(SoundType.ANNOUNCER, AnnouncerType.GAME_OVER);
+    }
+
+    public static void AnnounceCombo(int combo)
+    {
+        if (combo >= 30 && combo % 10 == 0)
+            PlaySound(SoundType.ANNOUNCER, AnnouncerType.GODLIKE);
+        else if (combo % 10 == 0)
+            PlaySound(SoundType.ANNOUNCER, AnnouncerType.KING_COMBO);
     }
 }
