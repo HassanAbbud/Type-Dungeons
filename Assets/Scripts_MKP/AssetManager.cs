@@ -7,9 +7,9 @@ using UnityEngine.UI;
 public enum GameMode
 {
     Adult,
-    Teenager,
     Kid
 }
+
 public class AssetManager : MonoBehaviour
 {
     private static AssetManager instance;
@@ -35,29 +35,16 @@ public class AssetManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    void Start()
-    {
-
-    }
-
-
-    void Update()
-    {
-
-    }
-
     public static GameMode GetGameMode()
     {
-        //Debug.Log((GameMode)settingsDropdown.value);
         return gameMode;
     }
 
     public void SetGameMode(int value)
     {
-        //Debug.Log("Dropdown reference is: " + settingsDropdown);
         gameMode = (GameMode)value;
-        //Debug.Log("Game mode changed to: " + gameMode);
         OnModeChanged?.Invoke();
+        SetBackground(); // Update background immediately if bound
     }
 
     public static void BindImage(Image image)
@@ -66,27 +53,11 @@ public class AssetManager : MonoBehaviour
         instance.SetBackground();
     }
 
-    /* React to Game Event */
-    //private void OnEnable()
-    //{
-    //    SceneManager.sceneLoaded += LoadNewScene;
-    //}
-
-    //private void OnDisable()
-    //{
-    //    SceneManager.sceneLoaded -= LoadNewScene;
-    //}
-
-    //private void LoadNewScene(Scene scene, LoadSceneMode mode)
-    //{
-    //    if (backgroundImg == null) return;
-    //    SetBackground();
-    //}
     private void SetBackground()
     {
-        if (backgroundImg == null) return;
+        if (backgroundImg == null || backgrounds == null || backgrounds.Length <= (int)gameMode)
+            return;
 
         backgroundImg.sprite = backgrounds[(int)gameMode];
     }
 }
-

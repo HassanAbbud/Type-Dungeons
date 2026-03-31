@@ -7,8 +7,6 @@ public enum SoundType
 {
     BGM_Adult1,
     BGM_Adult2,
-    BGM_Teen1,
-    BGM_Teen2,
     BGM_Kid1,
     BGM_Kid2,
     BTN_CLICK,
@@ -65,11 +63,6 @@ public class SoundManager : MonoBehaviour
         announcerSource = gameObject.AddComponent<AudioSource>();
     }
 
-    private void Start()
-    {
-        //
-    }
-
     public static void StopBGM()
     {
         if (instance.bgmSource.isPlaying && instance.bgmSource.loop)
@@ -86,7 +79,7 @@ public class SoundManager : MonoBehaviour
 
         switch (type)
         {
-            case SoundType.BGM_Adult1 or SoundType.BGM_Adult2 or SoundType.BGM_Teen1 or SoundType.BGM_Teen2 or SoundType.BGM_Kid1 or SoundType.BGM_Kid2:
+            case SoundType.BGM_Adult1 or SoundType.BGM_Adult2 or SoundType.BGM_Kid1 or SoundType.BGM_Kid2:
                 instance.bgmSource.clip = instance.audioClips[(int)type];
                 instance.bgmSource.loop = true;
                 instance.bgmSource.volume = bgmVolume * Scale;
@@ -111,7 +104,7 @@ public class SoundManager : MonoBehaviour
 
         switch (type)
         {
-            case SoundType.BGM_Adult1 or SoundType.BGM_Adult2 or SoundType.BGM_Teen1 or SoundType.BGM_Teen2 or SoundType.BGM_Kid1 or SoundType.BGM_Kid2:
+            case SoundType.BGM_Adult1 or SoundType.BGM_Adult2 or SoundType.BGM_Kid1 or SoundType.BGM_Kid2:
                 StopBGM();
                 break;
 
@@ -187,7 +180,6 @@ public class SoundManager : MonoBehaviour
             switch (currentMode)
             {
                 case GameMode.Adult: PlaySound(SoundType.BGM_Adult1); break;
-                case GameMode.Teenager: PlaySound(SoundType.BGM_Teen1); break;
                 case GameMode.Kid: PlaySound(SoundType.BGM_Kid1); break;
             }
         }
@@ -196,7 +188,6 @@ public class SoundManager : MonoBehaviour
             switch (currentMode)
             {
                 case GameMode.Adult: PlaySound(SoundType.BGM_Adult2); break;
-                case GameMode.Teenager: PlaySound(SoundType.BGM_Teen2); break;
                 case GameMode.Kid: PlaySound(SoundType.BGM_Kid2); break;
             }
         }
