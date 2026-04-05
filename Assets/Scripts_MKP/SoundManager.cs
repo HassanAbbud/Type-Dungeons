@@ -7,8 +7,6 @@ public enum SoundType
 {
     BGM_Adult1,
     BGM_Adult2,
-    BGM_Teen1,
-    BGM_Teen2,
     BGM_Kid1,
     BGM_Kid2,
     BTN_CLICK,
@@ -22,8 +20,8 @@ public enum AnnouncerType
 {
     GAME_START,
     GAME_OVER,
-    KING_COMBO, // 10 perfect words in a row
-    GODLIKE // 30 perfect words in a row
+    KING_COMBO,   // 10 perfect words in a row
+    GODLIKE       // 30 perfect words in a row
 }
 
 [RequireComponent(typeof(AudioSource))]
@@ -47,7 +45,6 @@ public class SoundManager : MonoBehaviour
 
     public static float Scale { get; set; } = 0.5f;
 
-    // ── Public volume getters (so sliders can read current values on init) ──
     public static float BGMVolume => bgmVolume;
     public static float SFXVolume => sfxVolume;
 
@@ -66,12 +63,7 @@ public class SoundManager : MonoBehaviour
         announcerSource = gameObject.AddComponent<AudioSource>();
     }
 
-    private void Start()
-    {
-        //
-    }
-
-    private static void StopBGM()
+    public static void StopBGM()
     {
         if (instance.bgmSource.isPlaying && instance.bgmSource.loop)
         {
@@ -87,20 +79,21 @@ public class SoundManager : MonoBehaviour
 
         switch (type)
         {
-            case SoundType.BGM_Adult1 or SoundType.BGM_Adult2 or SoundType.BGM_Teen1 or SoundType.BGM_Teen2 or SoundType.BGM_Kid1 or SoundType.BGM_Kid2:
+            case SoundType.BGM_Adult1 or SoundType.BGM_Adult2 or SoundType.BGM_Kid1 or SoundType.BGM_Kid2:
                 instance.bgmSource.clip = instance.audioClips[(int)type];
                 instance.bgmSource.loop = true;
                 instance.bgmSource.volume = bgmVolume * Scale;
                 instance.bgmSource.Play();
                 break;
+
             case SoundType.ANNOUNCER:
                 AudioClip announcerClip = instance.announcerClips[(int)announcerType];
                 EnqueueAnnouncement(announcerClip, announcerVolume * Scale);
                 break;
 
             default:
-                AudioClip clickClip = instance.audioClips[(int)type];
-                instance.sfxSource.PlayOneShot(clickClip, sfxVolume * Scale);
+                AudioClip clip = instance.audioClips[(int)type];
+                instance.sfxSource.PlayOneShot(clip, sfxVolume * Scale);
                 break;
         }
     }
@@ -111,7 +104,7 @@ public class SoundManager : MonoBehaviour
 
         switch (type)
         {
-            case SoundType.BGM_Adult1 or SoundType.BGM_Adult2 or SoundType.BGM_Teen1 or SoundType.BGM_Teen2 or SoundType.BGM_Kid1 or SoundType.BGM_Kid2:
+            case SoundType.BGM_Adult1 or SoundType.BGM_Adult2 or SoundType.BGM_Kid1 or SoundType.BGM_Kid2:
                 StopBGM();
                 break;
 
@@ -126,7 +119,6 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    /// <summary>Called by the BGM/SFX slider (labelled "SFX" in your UI = music).</summary>
     public static void UpdateBGMVolume(float value)
     {
         if (instance == null) return;
@@ -135,12 +127,10 @@ public class SoundManager : MonoBehaviour
             instance.bgmSource.volume = bgmVolume * Scale;
     }
 
-    /// <summary>Called by the VFX slider in your UI (= sound effects).</summary>
     public static void UpdateSFXVolume(float value)
     {
         if (instance == null) return;
         sfxVolume = value;
-        // sfxSource uses PlayOneShot so volume applies on next play — no live update needed
     }
 
     private static void EnqueueAnnouncement(AudioClip clip, float volume)
@@ -190,7 +180,6 @@ public class SoundManager : MonoBehaviour
             switch (currentMode)
             {
                 case GameMode.Adult: PlaySound(SoundType.BGM_Adult1); break;
-                case GameMode.Teenager: PlaySound(SoundType.BGM_Teen1); break;
                 case GameMode.Kid: PlaySound(SoundType.BGM_Kid1); break;
             }
         }
@@ -199,7 +188,6 @@ public class SoundManager : MonoBehaviour
             switch (currentMode)
             {
                 case GameMode.Adult: PlaySound(SoundType.BGM_Adult2); break;
-                case GameMode.Teenager: PlaySound(SoundType.BGM_Teen2); break;
                 case GameMode.Kid: PlaySound(SoundType.BGM_Kid2); break;
             }
         }

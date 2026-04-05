@@ -43,9 +43,7 @@ public class TypingInput : MonoBehaviour
         enemySpawner = FindObjectOfType<EnemySpawner>();
 
         if (GameManager.Instance != null)
-        {
             GameManager.Instance.OnGameStateChanged += HandleGameStateChanged;
-        }
 
         if (typingInputField != null)
         {
@@ -55,9 +53,7 @@ public class TypingInput : MonoBehaviour
         }
 
         if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameManager.GameState.Playing)
-        {
             StartCoroutine(StartTypingDelayed());
-        }
     }
 
     private void Update()
@@ -65,17 +61,11 @@ public class TypingInput : MonoBehaviour
         if (!inputActive) return;
         if (GameManager.Instance == null || GameManager.Instance.CurrentState != GameManager.GameState.Playing) return;
 
-        // If we have no word yet but enemy spawner has a target, grab it
         if (string.IsNullOrEmpty(currentWord) || currentWord == "waiting")
-        {
             TryLoadWordFromEnemy();
-        }
 
-        // Keep input field focused
         if (typingInputField != null && !typingInputField.isFocused && typingInputField.interactable)
-        {
             typingInputField.ActivateInputField();
-        }
     }
 
     private void OnDestroy()
@@ -141,7 +131,7 @@ public class TypingInput : MonoBehaviour
         OnWrongKey?.Invoke(typed, expected);
 
         SoundManager.PlaySound(SoundType.TYPING_ERROR);
-        
+
         if (uiManager != null)
             uiManager.FlashWrongKey();
 
@@ -174,58 +164,45 @@ public class TypingInput : MonoBehaviour
     {
         float accuracy = totalKeysThisWord == 0 ? 1f : (float)correctKeysThisWord / totalKeysThisWord;
 
-        // Tell GameManager for scoring
         GameManager.Instance?.CompleteWord(accuracy, currentWord.Length);
         OnWordDone?.Invoke(currentWord, accuracy);
+
+        SoundManager.PlaySound(SoundType.WORD_COMPLETE);
 
         // Tell enemy system the word is done
         if (enemySpawner != null)
         {
             enemySpawner.NotifyWordCompleted();
-            // Enemy may die or assign next word — wait a frame then grab the new word
             StartCoroutine(LoadWordFromEnemyNextFrame());
         }
         else
         {
-            // No enemy system — get word directly
             LoadNextWordDirect();
         }
     }
 
-    /// <summary>
-    /// Wait 1 frame for enemy spawner to process death/spawn, then grab new word.
-    /// </summary>
     private IEnumerator LoadWordFromEnemyNextFrame()
     {
-        // Clear current word while we wait
         currentWord = "";
         currentCharIndex = 0;
         correctKeysThisWord = 0;
         totalKeysThisWord = 0;
         typingInputField.SetTextWithoutNotify("");
 
-        yield return null; // wait 1 frame for spawner to process
+        yield return null;
 
         TryLoadWordFromEnemy();
     }
 
-    /// <summary>
-    /// Try to get the current word from the enemy spawner's active target.
-    /// </summary>
     private void TryLoadWordFromEnemy()
     {
         if (enemySpawner == null) return;
 
         string enemyWord = enemySpawner.GetCurrentTargetWord();
         if (!string.IsNullOrEmpty(enemyWord) && enemyWord != currentWord)
-        {
             SetWord(enemyWord);
-        }
     }
 
-    /// <summary>
-    /// Fallback: get word directly from GameManager (no enemy system).
-    /// </summary>
     private void LoadNextWordDirect()
     {
         string newWord = GameManager.Instance?.RequestNextWord();
@@ -272,7 +249,6 @@ public class TypingInput : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
         HandleGameStateChanged(GameManager.GameState.Playing);
 
-        // Wait for enemy spawner to have a target
         if (enemySpawner != null)
         {
             float timeout = 3f;
@@ -289,7 +265,6 @@ public class TypingInput : MonoBehaviour
             }
         }
 
-        // Fallback
         LoadNextWordDirect();
     }
 
