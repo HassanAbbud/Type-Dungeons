@@ -9,6 +9,7 @@ public class MainPanel : BasePanel<MainPanel>
     [SerializeField] private Button btnSettings;
     [SerializeField] private Button btnLeaderboard;
     [SerializeField] private Button btnQuit;
+    [SerializeField] private Button btnHowToPlay;
 
     private void Start()
     {
@@ -33,6 +34,13 @@ public class MainPanel : BasePanel<MainPanel>
             SoundManager.PlaySound(SoundType.BTN_CLICK);
             this.HideMe();
             SettingsPanel.Instance.ShowMe();
+        });
+
+        btnHowToPlay.onClick.AddListener(() =>
+        {
+            SoundManager.PlaySound(SoundType.BTN_CLICK);
+            HideMe();
+            HowToPlayPanel.Instance.ShowMe();
         });
 
         //quit game
