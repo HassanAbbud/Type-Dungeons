@@ -108,6 +108,8 @@ public class GameUIManager : MonoBehaviour
 
         if (WordDifficultyScaler.Instance != null)
             WordDifficultyScaler.Instance.OnDifficultyProfileChanged += UpdateDifficultyProfile;
+        else
+            StartCoroutine(RetrySubscribeToDifficulty());
 
 
         // Wire buttons
@@ -163,6 +165,8 @@ public class GameUIManager : MonoBehaviour
             gm.OnPlayerDied -= ShowAccuracyPanel;
             gm.OnPlayerDied -= SoundManager.StopBGM;
             gm.OnPlayerDied -= SoundManager.AnnounceGameOver;
+
+            gm.OnReachingCombo -= SoundManager.AnnounceCombo;
         }
 
         if (WordDifficultyScaler.Instance != null)

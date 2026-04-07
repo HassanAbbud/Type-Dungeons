@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting.FullSerializer;
-using UnityEditor.Overlays;
 using UnityEngine;
 
 public class Leaderboard
@@ -41,7 +38,7 @@ public class Leaderboard
 
         if (dataList.entries.Count > 10)
         {
-            dataList.entries.RemoveRange(10, dataList.entries.Count - 100);
+            dataList.entries.RemoveRange(10, dataList.entries.Count - 10);
         }
 
         // save to file
