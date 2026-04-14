@@ -249,6 +249,10 @@ public class EnemyController : MonoBehaviour
         // Notify spawner
         OnDefeated?.Invoke(this);
 
+        //Animator trigger
+        if (animator != null)
+            animator.SetTrigger("Death");
+
         // Destroy after a brief delay (for death animation)
         StartCoroutine(DestroyAfterDelay(0.5f));
 
@@ -268,6 +272,10 @@ public class EnemyController : MonoBehaviour
 
         // Notify
         OnAttacked?.Invoke(this);
+
+        //Animation trigger
+        if (animator != null)
+            animator.SetTrigger("Attack");
 
         // Remove
         StartCoroutine(DestroyAfterDelay(0.3f));
@@ -296,6 +304,36 @@ public class EnemyController : MonoBehaviour
             audioSource.PlayOneShot(clip);
         else
             AudioSource.PlayClipAtPoint(clip, transform.position);
+    }
+
+    /// <summary>
+    /// Called on every correct keystroke to show hit feedback.
+    /// </summary>
+    public void OnLetterHit()
+    {
+        if (!IsActive) return;
+
+        if (animator != null)
+            animator.SetTrigger("Hit");
+
+        // Fallback: color flash if no animator
+        StartCoroutine(HitFlash());
+    }
+
+    private IEnumerator HitFlash()
+    {
+        if (enemyImage != null)
+        {
+            enemyImage.color = Color.red;
+            yield return new WaitForSeconds(0.08f);
+            enemyImage.color = EnemyData != null ? EnemyData.tintColor : Color.white;
+        }
+        else if (spriteRenderer != null)
+        {
+            spriteRenderer.color = Color.red;
+            yield return new WaitForSeconds(0.08f);
+            spriteRenderer.color = EnemyData != null ? EnemyData.tintColor : Color.white;
+        }
     }
 
     private IEnumerator DestroyAfterDelay(float delay)

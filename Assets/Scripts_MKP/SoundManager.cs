@@ -65,12 +65,10 @@ public class SoundManager : MonoBehaviour
 
     public static void StopBGM()
     {
-        if (instance.bgmSource.isPlaying && instance.bgmSource.loop)
-        {
-            instance.bgmSource.Stop();
-            instance.bgmSource.loop = false;
-            instance.bgmSource.clip = null;
-        }
+        if (instance == null) return;
+        instance.bgmSource.Stop();
+        instance.bgmSource.loop = false;
+        instance.bgmSource.clip = null;
     }
 
     public static void PlaySound(SoundType type, AnnouncerType announcerType = 0)

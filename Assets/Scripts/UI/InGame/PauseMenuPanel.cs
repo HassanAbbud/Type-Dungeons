@@ -55,8 +55,10 @@ public class PauseMenuPanel : MonoBehaviour
             btnResume.onClick.AddListener(() =>
             {
                 SoundManager.PlaySound(SoundType.BTN_CLICK);
+                // Don't call SetActive(false) here — GameUIManager listens to
+                // OnGameStateChanged and hides the pause panel itself on resume.
+                // Calling SetActive here too causes a double-panel mismatch.
                 GameManager.Instance?.ResumeGame();
-                gameObject.SetActive(false);
             });
 
         if (btnQuit != null)
