@@ -116,6 +116,14 @@ public class TypingInput : MonoBehaviour
         GameManager.Instance?.RegisterKeystroke(true);
         OnCorrectKey?.Invoke(typed);
 
+        // Hit VFX on enemy
+        if (enemySpawner != null)
+        {
+            var target = enemySpawner.GetCurrentTarget();
+            if (target != null)
+                target.OnLetterHit();
+        }
+
         if (uiManager != null)
             uiManager.UpdateTypedProgress(currentWord, currentCharIndex);
 
