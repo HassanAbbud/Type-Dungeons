@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -298,6 +299,12 @@ public class GameManager : MonoBehaviour
     private void OnDestroy()
     {
         if (Instance == this) Instance = null;
+    }
+
+    public void OpenMenu()
+    {
+        //Open main menu game scene
+        SceneManager.LoadScene("MenuScene");
     }
 
     #endregion
